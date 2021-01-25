@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# Ignored files
+Debug/
+v16/
+Projet JV/Projet JV.vcxproj
+
+Projet JV.sln
+
+Projet JV/Projet JV.vcxproj.filters
+
+Projet JV/Projet JV.vcxproj.user
