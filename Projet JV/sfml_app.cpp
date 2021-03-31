@@ -129,7 +129,7 @@ int main()
         }
 
         animator.Update(deltaTime);
-        motor.Move();
+        motor.Move(); // changer en Time * vitesse
 
         //ALWAYS CENTER VIEW
         /*
