@@ -4,7 +4,7 @@
 
 AssetManager* AssetManager::sInstance = nullptr;
 
-AssetManager::AssetManager() 
+AssetManager::AssetManager()
 {
 	assert(sInstance == nullptr);
 	sInstance = this;
@@ -12,7 +12,7 @@ AssetManager::AssetManager()
 AssetManager::~AssetManager() {
 
 }
-sf::Texture& AssetManager::GetTexture(std::string const& filename) 
+sf::Texture& AssetManager::GetTexture(std::string const& filename)
 {
 	auto& textMap = sInstance->m_Textures; //texture Map
 	auto search = textMap.find("Asset/Textures/" + filename);

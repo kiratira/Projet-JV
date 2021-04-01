@@ -4,7 +4,7 @@
 
 class AssetManager
 {
-public :
+public:
 	AssetManager();
 	~AssetManager();
 	static sf::Texture& GetTexture(std::string const& filename);
