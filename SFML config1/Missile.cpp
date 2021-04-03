@@ -1,10 +1,11 @@
 #include "Missile.h"
 #include <iostream>
 
-Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f angle, float power)
+Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f angle, float power, int damage)
 {
 	this->power = power;
 	this->angle = angle;
+	this->damage = damage;
 
 	body.setSize(size);
 	body.setTexture(texture);

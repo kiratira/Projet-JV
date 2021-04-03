@@ -93,9 +93,9 @@ void Player::SetMovement(bool state)
 	canMove = state;
 }
 
-void Player::TakeDamage(int damage)
+bool Player::TakeDamage(int damage)
 {
-
 	life -= damage;
-
+	if (life <= 0) return true;	
+	return false;
 }

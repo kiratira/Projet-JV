@@ -14,7 +14,7 @@ public:
 	void Draw(sf::RenderWindow& window);
 	void Oncollision(sf::Vector2f direction);
 	void SetMovement(bool state);
-	void TakeDamage(int damage);
+	bool TakeDamage(int damage);
 
 	sf::Vector2f GetPosition() { return body.getPosition(); }
 	Collider GetCollider() { return Collider(&body); }

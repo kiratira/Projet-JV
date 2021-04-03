@@ -36,12 +36,12 @@ int main()
     players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f,sf::Vector2f(223,190) / 3.0f,sf::Vector2f(60,0),200.0f));   
 
     //Test Missile + explosion
-    /*
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(200, 0), 50, sf::Vector2f(0, 0), 0));
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(200, -100), 50, sf::Vector2f(0, 0), 0));
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(200, -200), 50, sf::Vector2f(0, 0), 0));
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(200, -300), 50, sf::Vector2f(0, 0), 0));
-    */
+    
+    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, 0), 50, sf::Vector2f(0, 0), 0, 50));
+    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -100), 50, sf::Vector2f(0, 0), 0, 60));
+    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -200), 50, sf::Vector2f(0, 0), 0, 10));
+    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -300), 50, sf::Vector2f(0, 0), 0, 10));
+    
 
     players[0]->SetMovement(true);
     mainPlayer = players[mainPlayernbre];
@@ -118,6 +118,7 @@ int main()
         unsigned int cptP = 0;
         unsigned int cptE = 0;
         unsigned int cptM = 0;
+        unsigned int cptPl = 0;
         for (Platforme* platforme : platformes )
         {
             for (Player* player : players)
@@ -161,7 +162,19 @@ int main()
 
                             cptE++;
                         }
-                    }               
+                    } 
+                    cptPl = 0;
+                    for (Player* player : players)
+                    {
+                        if (player->GetCollider().CheckCollisionCircle(exploCol)) 
+                            if (player->TakeDamage(missile->GetDamage()))
+                            {
+                                delete player;
+                                players.erase(players.begin() + cptPl);
+                            }
+                        cptPl++;
+                    }
+
                     delete(missile);
                     missiles.erase(missiles.begin() + cptM);
                 }

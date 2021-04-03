@@ -7,7 +7,7 @@ class Missile
 {
 public:
 
-	Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo , sf::Vector2f angle, float power);
+	Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo, sf::Vector2f angle, float power, int damage);
 	~Missile();
 
 	void Update(float deltaTime);
@@ -17,6 +17,7 @@ public:
 	Collider GetCollider() { return Collider(&body); }
 	Collider GetExploCollider() { return Collider(&explosion); }
 	sf::Vector2f GetPosition() { return body.getPosition(); }
+	int GetDamage() { return damage; }
 
 
 private:
@@ -26,5 +27,6 @@ private:
 	sf::Vector2f velocity;
 	sf::Vector2f angle;
 	float power;
+	int damage;
 };
 
