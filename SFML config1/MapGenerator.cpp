@@ -21,7 +21,7 @@ void MapGenerator::BlockGeneration(sf::Texture* texture, sf::Vector2f sizeTextur
 	{
 		for (int x = 0; x < size.x; x += sizeTexture.x)
 		{
-			pVector.push_back(new Platforme(texture, sizeTexture, sf::Vector2f(x, y)));
+			//pVector.push_back(new Platforme(texture, sizeTexture, sf::Vector2f(x, y)));
 		}			
 	}
 }

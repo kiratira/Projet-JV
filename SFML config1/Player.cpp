@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, float jumpHeight) :
+Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight) :
 	animation(texture, imageCount, switchTime)
 {
 	this->speed = speed;
@@ -9,7 +9,7 @@ Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, 
 	faceRight = true;
 
 	body.setSize(size);
-	body.setPosition(20.0f, 0.0f);
+	body.setPosition(spawnPoint);
 	body.setOrigin(size * 0.5f);
 	body.setTexture(texture);
 }
@@ -20,24 +20,25 @@ Player::~Player()
 
 void Player::Update(float deltaTime)
 {
-
-	velocity.x *= 0.2f;
-
-	if (sf::Event::EventType::KeyPressed)
+	if (canMove)
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-			velocity.x -= speed;
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			velocity.x += speed;
+		velocity.x *= 0.2f;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canJump)
+		if (sf::Event::EventType::KeyPressed)
 		{
-			canJump = false;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+				velocity.x -= speed;
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+				velocity.x += speed;
 
-			velocity.y = -sqrtf(2.0f * 981.0f * jumpHeight);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canJump)
+			{
+				canJump = false;
+
+				velocity.y = -sqrtf(2.0f * 981.0f * jumpHeight);
+			}
 		}
 	}
-
 
 	velocity.y += 981.0f * deltaTime; //Gravite
 
@@ -85,4 +86,16 @@ void Player::Oncollision(sf::Vector2f direction)
 	{
 		velocity.y = 0.0f; //Top
 	}
+}
+
+void Player::SetMovement(bool state)
+{
+	canMove = state;
+}
+
+void Player::TakeDamage(int damage)
+{
+
+	life -= damage;
+
 }

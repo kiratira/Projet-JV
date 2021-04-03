@@ -2,10 +2,14 @@
 
 
 
-Collider::Collider(sf::RectangleShape& body) :
-    body(body)
+Collider::Collider(sf::RectangleShape* body) 
 {
+    this->body = body;
+}
 
+Collider::Collider(sf::CircleShape* body)
+{
+    this->bodyC = body;
 }
 
 
@@ -71,10 +75,44 @@ bool Collider::CheckCollision(Collider& other,sf::Vector2f& direction , float pu
             }
         }
 
-
         return true;
     }
 
+    return false;
+}
+
+bool Collider::CheckCollision(Collider& other)
+{
+    sf::Vector2f otherPosition = other.GetPosition();
+    sf::Vector2f otherHalhSize = other.GetHalfSize();
+    sf::Vector2f thisPosition = GetPosition();
+    sf::Vector2f thisHalhSize = GetHalfSize();
+
+    float deltaX = otherPosition.x - thisPosition.x;
+    float deltaY = otherPosition.y - thisPosition.y;
+
+    float intersectX = abs(deltaX) - (otherHalhSize.x + thisHalhSize.x);
+    float intersectY = abs(deltaY) - (otherHalhSize.y + thisHalhSize.y);
+
+    if (intersectX < 0.0f && intersectY < 0.0f) return true;
+
+    return false;
+}
+
+bool Collider::CheckCollisionCircle(Collider& other)
+{
+    sf::Vector2f otherPosition = other.GetPositionCircle();
+    sf::Vector2f otherHalhSize = other.GetHalfSizeCircle();
+    sf::Vector2f thisPosition = GetPosition();
+    sf::Vector2f thisHalhSize = GetHalfSize();
+
+    float deltaX = otherPosition.x - thisPosition.x;
+    float deltaY = otherPosition.y - thisPosition.y;
+
+    float intersectX = abs(deltaX) - (otherHalhSize.x + thisHalhSize.x);
+    float intersectY = abs(deltaY) - (otherHalhSize.y + thisHalhSize.y);
+
+    if (intersectX < 0.0f && intersectY < 0.0f) return true;
 
     return false;
 }
