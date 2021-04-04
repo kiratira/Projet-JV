@@ -16,6 +16,7 @@ void ClearVector(std::vector<Player*> vect);
 void ClearVector(std::vector<Missile*> vect);
 void ClearVector(std::vector<Caisse*> vect);
 void SwapMainPlayer(Player* actual, Player* next);
+bool CheckPlayerAlive(std::vector<Player*> players);
 
 int main()
 {
@@ -39,7 +40,8 @@ int main()
 
     //Test Generation player + Main player
     players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, 0));
-    players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(60, 0), 200.0f, 100, 0));
+    players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(60, 0), 200.0f, 100, 1));
+    players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(200, 0), 200.0f, 100, 1));
 
     //Test Missile + explosion
     /*
@@ -106,12 +108,10 @@ int main()
                     //TODO Gestion de l'angle de tire
                     if (mainPlayer->Shoot("missile"))
                     {
-                        std::cout << mainPlayer->GetMunition("missile");
                         sf::Vector2f angle = sf::Vector2f(1, -2);
                         if (!mainPlayer->IsFaceRight()) angle.x *= -1;
                         missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), mainPlayer->GetPosition(), 50, angle, 200, 50));
                     }
-                    else std::cout << "TA PLUS DE MUN GROS CON" << std::endl;
                     
                 }
                 break;
@@ -206,6 +206,8 @@ int main()
                             {
                                 delete player;
                                 players.erase(players.begin() + cptPl);
+
+                                CheckPlayerAlive(players);
                             }
                         cptPl++;
                     }
@@ -336,4 +338,24 @@ void SwapMainPlayer(Player* actual, Player* next)
 {
     actual->SetMovement(false);
     next->SetMovement(true);  
+}
+
+bool CheckPlayerAlive(std::vector<Player*> players) {
+
+    if (players.size() == 1)
+    {
+        std::cout << "GG l'Equipe " << players[0]->GetTagEquipe() << " a gagne" << std::endl;
+        return 0;
+    }
+
+    for (int i = 0; i < players.size() - 1; i++)
+    {
+        if (!players[i]->GetTagEquipe() == players[i + 1]->GetTagEquipe())break;
+        if (i == players.size() - 2)
+        {
+            std::cout << "GG l'Equipe " << players[i]->GetTagEquipe() << " a gagne" << std::endl;
+            return 0;
+        }
+    }
+
 }
