@@ -8,7 +8,7 @@
 class Player
 {
 public:
-	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight);
+	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, int tagEquipe);
 	~Player();
 
 
@@ -16,7 +16,7 @@ public:
 	void Draw(sf::RenderWindow& window);
 	void Oncollision(sf::Vector2f direction);
 	void SetMovement(bool state);
-	void SetTagEquipe(int tag);
+	void RecoverLife(int amount);
 	
 
 	sf::Vector2f GetPosition() { return body.getPosition(); }
@@ -41,7 +41,8 @@ private:
 	float jumpHeight;
 	bool canMove = false;
 
-	int life = 100;
+	int life;
+	int maxLife = 100;
 
 	inventory inventaire;
 	int tagEquipe;

@@ -1,10 +1,15 @@
 #include "Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight) :
+Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight, int maxLife, int tagEquipe) :
 	animation(texture, imageCount, switchTime)
 {
 	this->speed = speed;
 	this->jumpHeight = jumpHeight;
+	this->maxLife = maxLife;
+	this->life = maxLife;
+	this->tagEquipe = tagEquipe;
+
+	//animation
 	row = 0;
 	faceRight = true;
 
@@ -93,9 +98,12 @@ void Player::SetMovement(bool state)
 	canMove = state;
 }
 
-void Player::SetTagEquipe(int tag)
+void Player::RecoverLife(int amount)
 {
-	tagEquipe = tag;
+	std::cout << "J'avais : " << life << std::endl;
+	if (life + amount > maxLife) life = maxLife;
+	else life += amount;
+	std::cout << "J'ai maintenant : " << life << std::endl;
 }
 
 bool Player::TakeDamage(int damage)

@@ -1,11 +1,13 @@
 #include "Caisse.h"
 
-Caisse::Caisse(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint)
+Caisse::Caisse(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint,int typeCaisse)
 {
 	body.setTexture(texture);
 	body.setSize(size);
 	body.setOrigin(size * 0.5f);
 	body.setPosition(spawnPoint);
+
+	this->typeCaisse = typeCaisse;
 }
 
 Caisse::~Caisse()
@@ -42,11 +44,27 @@ void Caisse::Oncollision(sf::Vector2f direction)
 	}
 }
 
-
-CaisseMunition::CaisseMunition(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, std::string type, int nbre) :
-	Caisse(texture, size, spawnPoint)
+std::string Caisse::GetTypeMunition()
 {
-	this->type = type;
+	return std::string();
+}
+
+int Caisse::GetNbreMunition()
+{
+	return 0;
+}
+
+int Caisse::GetNbreHeal()
+{
+	return 0;
+}
+
+
+CaisseMunition::CaisseMunition(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, std::string typeMunition, int nbre) :
+	Caisse(texture,size,spawnPoint,1)
+{
+	
+	this->typeMunition = typeMunition;
 	this->nbre = nbre;
 }
 
@@ -57,7 +75,7 @@ CaisseMunition::~CaisseMunition()
 
 
 CaisseHeal::CaisseHeal(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, int nbre) :
-	Caisse(texture,size,spawnPoint)
+	Caisse(texture,size,spawnPoint,2)
 {
 	this->nbre = nbre;
 }
