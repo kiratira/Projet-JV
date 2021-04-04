@@ -39,6 +39,12 @@
     <ClCompile Include="Missile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="inventory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Caisse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -59,10 +65,13 @@
     <ClInclude Include="MapGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="Missile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Missile.h">
+    <ClInclude Include="inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Caisse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

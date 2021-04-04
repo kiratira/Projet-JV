@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Animation.h"
 #include "Collider.h"
+#include "inventory.h"
 
 class Player
 {
@@ -14,11 +16,18 @@ public:
 	void Draw(sf::RenderWindow& window);
 	void Oncollision(sf::Vector2f direction);
 	void SetMovement(bool state);
-	bool TakeDamage(int damage);
+	void SetTagEquipe(int tag);
+	
 
 	sf::Vector2f GetPosition() { return body.getPosition(); }
 	Collider GetCollider() { return Collider(&body); }
 	int GetLife() { return life; }
+	bool IsFaceRight() { return faceRight; }
+	bool TakeDamage(int damage);
+	bool Shoot(std::string type);
+	int GetMunition(std::string type);
+	int GetTagEquipe() { return tagEquipe; }
+	inventory* GetInventaire() { return &inventaire; }
 
 private:
 	sf::RectangleShape body;
@@ -33,6 +42,9 @@ private:
 	bool canMove = false;
 
 	int life = 100;
+
+	inventory inventaire;
+	int tagEquipe;
 
 };
 

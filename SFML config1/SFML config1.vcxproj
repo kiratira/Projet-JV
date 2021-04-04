@@ -181,7 +181,9 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Caisse.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="inventory.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Platforme.cpp" />
@@ -191,12 +193,13 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Caisse.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="inventory.h" />
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="Platforme.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

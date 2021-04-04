@@ -24,6 +24,8 @@ Missile::~Missile()
 
 void Missile::Update(float deltaTime)
 {
+	velocity += angle * power;
+	power = 0;
 	velocity.y += 981.0f * deltaTime; //Gravite
 	body.move(velocity * deltaTime);
 	explosion.setPosition(body.getPosition());

@@ -93,9 +93,24 @@ void Player::SetMovement(bool state)
 	canMove = state;
 }
 
+void Player::SetTagEquipe(int tag)
+{
+	tagEquipe = tag;
+}
+
 bool Player::TakeDamage(int damage)
 {
 	life -= damage;
 	if (life <= 0) return true;	
 	return false;
+}
+
+bool Player::Shoot(std::string type)
+{
+	return inventaire.UseMunition(type);
+}
+
+int Player::GetMunition(std::string type)
+{
+	return inventaire.GetMunition(type);
 }

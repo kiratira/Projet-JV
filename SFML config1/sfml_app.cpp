@@ -1,11 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream>
 #include "AssetManager.h"
 #include "Player.h"
 #include "Platforme.h"
 #include "MapGenerator.h"
 #include "Missile.h"
-#include <iostream>
+#include "Caisse.h"
+
 
 
 
@@ -26,6 +28,7 @@ int main()
     std::vector<Player*> players;
     std::vector<Platforme*> platformes;
     std::vector<Missile*> missiles;
+    std::vector<CaisseMunition*> caisses;
 
     Player* mainPlayer;
     unsigned int mainPlayernbre = 0;
@@ -36,15 +39,12 @@ int main()
     players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f,sf::Vector2f(223,190) / 3.0f,sf::Vector2f(60,0),200.0f));   
 
     //Test Missile + explosion
-    
+    /*
     missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, 0), 50, sf::Vector2f(0, 0), 0, 50));
     missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -100), 50, sf::Vector2f(0, 0), 0, 60));
     missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -200), 50, sf::Vector2f(0, 0), 0, 10));
     missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -300), 50, sf::Vector2f(0, 0), 0, 10));
-    
-
-    players[0]->SetMovement(true);
-    mainPlayer = players[mainPlayernbre];
+    */
 
     //Test Generation Map
     for (int y = 200; y < 404; y += 4)
@@ -63,6 +63,13 @@ int main()
         }
     }
 
+    //caisse de munition
+
+    caisses.push_back(new CaisseMunition(nullptr, sf::Vector2f(20, 20), sf::Vector2f(250, 0), "missile", 3));
+
+
+    players[0]->SetMovement(true);
+    mainPlayer = players[mainPlayernbre];
 
     while (window.isOpen())
     {
@@ -88,6 +95,19 @@ int main()
                     if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
                     SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
                     mainPlayer = players[mainPlayernbre];
+                    break;
+                case sf::Keyboard::G: // SHOOT
+
+                    //TODO Gestion de l'angle de tire
+                    if (mainPlayer->Shoot("missile"))
+                    {
+                        std::cout << mainPlayer->GetMunition("missile");
+                        sf::Vector2f angle = sf::Vector2f(1, -2);
+                        if (!mainPlayer->IsFaceRight()) angle.x *= -1;
+                        missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), mainPlayer->GetPosition(), 50, angle, 200, 50));
+                    }
+                    else std::cout << "TA PLUS DE MUN GROS CON" << std::endl;
+                    
                 }
                 break;
             case sf::Event::EventType::KeyReleased:
@@ -111,6 +131,11 @@ int main()
         {
             missile->Update(deltaTime);
         }
+
+        for (CaisseMunition* caisse : caisses)
+        {
+            caisse->Update(deltaTime);
+        }
         
         sf::Vector2f direction;
         
@@ -121,13 +146,13 @@ int main()
         unsigned int cptPl = 0;
         for (Platforme* platforme : platformes )
         {
-            for (Player* player : players)
+            for (Player* player : players) //CHECK DES PLAYERS / SOL
             {
                 Collider playerCol = player->GetCollider();
 
                 if (platforme->GetCollider().CheckCollision(playerCol, direction, 1.0f)) // UNIQUEMENT PLAYER
                 {
-                    if (platforme->GetLayer() == 0)
+                    if (platforme->GetLayer() == 0) //DESTRUCTION EN FCT DU LAYER
                     {
                         player->Oncollision(direction);
                         delete(platforme);
@@ -141,7 +166,7 @@ int main()
             } 
 
             cptM = 0;
-            for (Missile* missile : missiles)
+            for (Missile* missile : missiles) //CHECK DES MISSILES / SOL
             {
                 Collider missileCol = missile->GetCollider();
 
@@ -179,9 +204,34 @@ int main()
                     missiles.erase(missiles.begin() + cptM);
                 }
                 cptM++;
-            }     
+            }
+
+            for (CaisseMunition* caisse : caisses)
+            {
+                Collider caisseCol = caisse->GetCollider();
+                if (platforme->GetCollider().CheckCollision(caisseCol,direction,1.0f)) {
+                    caisse->Oncollision(direction);
+                }
+            }
+
             cptP++;
         }
+        unsigned int cptCM = 0;
+        for (CaisseMunition* caisse : caisses)
+        {
+            for (Player* player : players)
+            {
+                Collider playerCol = player->GetCollider();
+                if (caisse->GetCollider().CheckCollision(playerCol))
+                {
+                    player->GetInventaire()->AddMunition(caisse->GetType(), caisse->GetNbre());
+                    delete(caisse);
+                    caisses.erase(caisses.begin() + cptCM);
+                }
+            }
+            cptCM++;
+        }
+
 
         view.setCenter(mainPlayer->GetPosition());
         window.clear();
@@ -200,6 +250,12 @@ int main()
         {
             platforme->Draw(window);
         }
+
+        for (CaisseMunition* caisse : caisses)
+        {
+            caisse->Draw(window);
+        }
+
         window.display();
     }
 
