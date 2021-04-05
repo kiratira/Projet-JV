@@ -185,6 +185,7 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="inventory.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Platforme.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="MapGenerator.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="Platforme.h" />
     <ClInclude Include="Player.h" />

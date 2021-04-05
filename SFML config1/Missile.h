@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Collider.h"
 #include <iostream>
+#include "Collider.h"
+#include "Math.h"
 
 class Missile
 {
@@ -25,7 +26,7 @@ private:
 	sf::RectangleShape body;
 	sf::CircleShape explosion;
 	sf::Vector2f velocity;
-	sf::Vector2f angle;
+	sf::Vector2f force;
 	float power;
 	int damage;
 };

@@ -70,8 +70,15 @@ int main()
 
     //caisse de munition
 
-    caisses.push_back(new CaisseMunition(nullptr, sf::Vector2f(20, 20), sf::Vector2f(250, 0), "missile", 3));
-    caisses.push_back(new CaisseHeal(nullptr, sf::Vector2f(20, 20), sf::Vector2f(300, 0), 30));
+    caisses.push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(270, 0), "missile", 3));
+    caisses.push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(330, 0), 30));
+
+    //TEST SOUND (Fonctionnel)
+    /*
+    sf::Sound sound;
+    sound.setBuffer(AssetManager::GetSoundBuffer("boom.ogg"));
+    */
+
 
 #pragma endregion
 
@@ -96,7 +103,7 @@ int main()
             case sf::Event::EventType::KeyPressed:
                 switch (event.key.code)
                 {
-                case sf::Keyboard::T:
+                case sf::Keyboard::T: //SWAP Player test
                     canChange = false;
                     mainPlayernbre++;
                     if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -183,6 +190,9 @@ int main()
                 if (platforme->GetCollider().CheckCollision(missileCol))
                 {
                     Collider exploCol = missile->GetExploCollider();
+                    
+                    //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
+                    //sound.play();
 
                     for (int i = 0; i < 5; i++)
                     {
@@ -260,6 +270,9 @@ int main()
 #pragma region Camera + Affichage
 
         view.setCenter(mainPlayer->GetPosition());
+
+        //sf::Listener::setPosition(mainPlayer->GetPosition().x, mainPlayer->GetPosition().y, 0);
+
         window.clear();
         window.setView(view);
         for (Player* player : players)
