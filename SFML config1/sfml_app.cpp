@@ -7,7 +7,7 @@
 #include "MapGenerator.h"
 #include "Missile.h"
 #include "Caisse.h"
-#include "GUI.h"
+#include "UI.h"
 
 #define VectZero sf::Vector2f(0,0)
 
@@ -21,11 +21,14 @@ bool CheckPlayerAlive(std::vector<Player*> players);
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1200, 600), "SFML works!");
-    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(1200.0f, 600.0f));
+    sf::RenderWindow window(sf::VideoMode(2048, 1080), "SFML works!");
+    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(2048, 1080));
+    sf::View Uiview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(2048, 1080));
     AssetManager a_manager;
+    //GUI ui_manager;
     //MapGenerator a_generator;
-    sf::Clock clock;
+    sf::Clock clockDeltaTime;
+    sf::Clock clockTimer;
     float deltaTime = 0.0f;
 
     std::vector<Player*> players;
@@ -37,20 +40,15 @@ int main()
     unsigned int mainPlayernbre = 0;
     bool canChange = true;
 
-#pragma region TestZONE
+    bool startParty = false;
 
+#pragma region TestZONE
+    
     //Test Generation player + Main player
     players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, 0));
     players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(60, 0), 200.0f, 100, 1));
     players.push_back(new Player(&AssetManager::GetTexture("persoSheet.png"), sf::Vector2u(3, 3), 0.3f, 200.0f, sf::Vector2f(223, 190) / 3.0f, sf::Vector2f(200, 0), 200.0f, 100, 1));
 
-    //Test Missile + explosion
-    /*
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, 0), 50, sf::Vector2f(0, 0), 0, 50));
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -100), 50, sf::Vector2f(0, 0), 0, 60));
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -200), 50, sf::Vector2f(0, 0), 0, 10));
-    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), sf::Vector2f(90, -300), 50, sf::Vector2f(0, 0), 0, 10));
-    */
 
     //Test Generation Map
     for (int y = 200; y < 404; y += 4)
@@ -77,27 +75,31 @@ int main()
     //TEST SOUND (Fonctionnel)
     /*
     sf::Sound sound;
-    sound.setBuffer(AssetManager::GetSoundBuffer("boom.ogg"));
+    sound.setBuffer(AssetManager::GetSoundBuffer("boom.ogg")); 
     */
+    sf::Vector2f timerPosition = sf::Vector2f(window.getSize().x * 5 / 100, window.getSize().y * 90 / 100);
 
-    Compteur* testCompteur = new Compteur(&AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(50, 0), 0);
-    
+    Compteur* testCompteur = new Compteur(&AssetManager::GetFont("Stupid Meeting_D.otf"), timerPosition , 0,32,sf::Color::Blue);
+    Image* testImage = new Image(&AssetManager::GetTexture("CadreUI.png"), timerPosition, sf::Vector2f(60, 60));
+    Button* testButton = new Button(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"),&AssetManager::GetFont("Stupid Meeting_D.otf"),"Inventaire",32, sf::Vector2f(240,80), sf::Vector2f(window.getSize().x - 240 ,0),0);
 
-    Button* testButton = new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),"", sf::Vector2f(32,32), sf::Vector2f(0,0), testCompteur);
+    Image* testInventaire = new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(window.getSize().x, window.getSize().y) * 0.45f, sf::Vector2f(window.getSize().x, window.getSize().y) * 0.9f);
+    CaseInventaire* testCaseI = new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("Bazooka.png"), &AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(100, 100), sf::Vector2f(100, 100));
 
-    
-
-
-#pragma endregion
-
+    //MAIN PLAYER SELECTION
     players[0]->SetMovement(true);
     mainPlayer = players[mainPlayernbre];
 
+#pragma endregion
+
+
     while (window.isOpen())
     {
-        deltaTime = clock.restart().asSeconds();
-        if (deltaTime > 1.0f / 20.0f) deltaTime = 1.0f / 20.0f; //bug de la fenêtre
+        deltaTime = clockDeltaTime.restart().asSeconds();
 
+        testCompteur->SetValue(20 - clockTimer.getElapsedTime().asSeconds());
+
+        if (deltaTime > 1.0f / 20.0f) deltaTime = 1.0f / 20.0f; //bug de la fenêtre
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -307,30 +309,41 @@ int main()
         //sf::Listener::setPosition(mainPlayer->GetPosition().x, mainPlayer->GetPosition().y, 0);
 
         window.clear();
-        window.setView(view);
-        for (Player* player : players)
-        {
-            player->Draw(window);
-        }
 
-        for (Missile* missile : missiles)
+        //entité view
+        if (startParty)
         {
-            missile->Draw(window);
-        }
+            window.setView(view);
+            for (Player* player : players)
+            {
+                player->Draw(window);
+            }
 
-        for (Platforme* platforme : platformes)
-        {
-            platforme->Draw(window);
-        }
+            for (Missile* missile : missiles)
+            {
+                missile->Draw(window);
+            }
 
-        for (Caisse* caisse : caisses)
-        {
-            caisse->Draw(window);
-        }
+            for (Platforme* platforme : platformes)
+            {
+                platforme->Draw(window);
+            }
 
-        testCompteur->Draw(window);
+            for (Caisse* caisse : caisses)
+            {
+                caisse->Draw(window);
+            }
+        }
+       
+
+        //UI view
+        window.setView(Uiview);
+
+        testImage->Draw(window);
+        testCompteur->Draw(window);    
         testButton->Draw(window);
-
+        testInventaire->Draw(window);
+        testCaseI->Draw(window);
         window.display();
 
 #pragma endregion
@@ -345,7 +358,9 @@ int main()
 
 
     delete(testButton);
+    delete(testImage);
     delete(testCompteur);
+    delete(testInventaire);
 
 
     return 0;
