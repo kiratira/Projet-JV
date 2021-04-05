@@ -2,6 +2,7 @@
 
 
 
+
 Collider::Collider(sf::RectangleShape* body) 
 {
     this->body = body;
@@ -106,13 +107,13 @@ bool Collider::CheckCollisionCircle(Collider& other)
     sf::Vector2f thisPosition = GetPosition();
     sf::Vector2f thisHalhSize = GetHalfSize();
 
-    float deltaX = otherPosition.x - thisPosition.x;
-    float deltaY = otherPosition.y - thisPosition.y;
+    int intervalX = thisPosition.x - otherPosition.x;
+    int intervalY = thisPosition.y - otherPosition.y;
+    int interval = sqrt((intervalX * intervalX) + (intervalY * intervalY));
+    int radius = 100;
 
-    float intersectX = abs(deltaX) - (otherHalhSize.x + thisHalhSize.x);
-    float intersectY = abs(deltaY) - (otherHalhSize.y + thisHalhSize.y);
-
-    if (intersectX < 0.0f && intersectY < 0.0f) return true;
+    //std::cout << radius << " " << intervalX << " " << intervalY << " " << interval << std::endl;
+    if (interval < radius) return true;
 
     return false;
 }
