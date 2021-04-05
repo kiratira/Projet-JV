@@ -194,7 +194,7 @@ int main()
                     //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
                     //sound.play();
 
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 7; i++)
                     {
                         cptE = 0;
                         for (Platforme* platforme : platformes)
@@ -360,10 +360,17 @@ bool CheckPlayerAlive(std::vector<Player*> players) {
         std::cout << "GG l'Equipe " << players[0]->GetTagEquipe() << " a gagne" << std::endl;
         return 0;
     }
+    else if (players.size() == 0) {
+        std::cout << "ex aequo" << std::endl;
+        return 0;
+    }
 
     for (int i = 0; i < players.size() - 1; i++)
     {
-        if (!players[i]->GetTagEquipe() == players[i + 1]->GetTagEquipe())break;
+        if (!players[i]->GetTagEquipe() == players[i + 1]->GetTagEquipe()) {
+            break;
+        }
+        
         if (i == players.size() - 2)
         {
             std::cout << "GG l'Equipe " << players[i]->GetTagEquipe() << " a gagne" << std::endl;
