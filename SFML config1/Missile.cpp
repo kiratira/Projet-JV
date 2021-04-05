@@ -3,7 +3,8 @@
 
 #define PI 3.1416
 
-Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f force, float power, int damage)
+Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f force, float power, int damage) :
+	Rigidbody(&body)
 {
 	this->power = power;
 	this->force = force;

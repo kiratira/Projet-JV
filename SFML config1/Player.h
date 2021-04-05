@@ -5,8 +5,9 @@
 #include "Animation.h"
 #include "Collider.h"
 #include "inventory.h"
+#include "Rigidbody.h"
 
-class Player
+class Player : public Rigidbody
 {
 public:
 	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, int tagEquipe);
@@ -14,14 +15,13 @@ public:
 
 
 	void Update(float deltaTime);
-	void Draw(sf::RenderWindow& window);
+	void Draw(sf::RenderWindow& window) { window.draw(body); };
 	void Oncollision(sf::Vector2f direction);
-	void SetMovement(bool state);
+
+	void SetMovement(bool state) { canMove = state; };
 	void RecoverLife(int amount);
 	
 
-	sf::Vector2f GetPosition() { return body.getPosition(); }
-	Collider GetCollider() { return Collider(&body); }
 	int GetLife() { return life; }
 	bool IsFaceRight() { return faceRight; }
 	bool TakeDamage(int damage);

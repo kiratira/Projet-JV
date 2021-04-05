@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight, int maxLife, int tagEquipe) :
-	animation(texture, imageCount, switchTime)
+	animation(texture, imageCount, switchTime), Rigidbody(&body)
 {
 	this->speed = speed;
 	this->jumpHeight = jumpHeight;
@@ -63,13 +63,6 @@ void Player::Update(float deltaTime)
 
 }
 
-void Player::Draw(sf::RenderWindow& window)
-{
-
-	window.draw(body);
-
-}
-
 void Player::Oncollision(sf::Vector2f direction)
 {
 	if (direction.x < 0.0f)
@@ -91,10 +84,6 @@ void Player::Oncollision(sf::Vector2f direction)
 	}
 }
 
-void Player::SetMovement(bool state)
-{
-	canMove = state;
-}
 
 void Player::RecoverLife(int amount)
 {

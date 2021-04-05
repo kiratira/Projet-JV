@@ -3,8 +3,9 @@
 #include <iostream>
 #include "Collider.h"
 #include "Math.h"
+#include "Rigidbody.h"
 
-class Missile
+class Missile : public Rigidbody
 {
 public:
 
@@ -13,11 +14,10 @@ public:
 
 	void Update(float deltaTime);
 	void Draw(sf::RenderWindow& window);
+
 	void DrawExplosion(sf::RenderWindow& window);
 
-	Collider GetCollider() { return Collider(&body); }
 	Collider GetExploCollider() { return Collider(&explosion); }
-	sf::Vector2f GetPosition() { return body.getPosition(); }
 	int GetDamage() { return damage; }
 
 
