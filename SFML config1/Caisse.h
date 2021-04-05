@@ -25,7 +25,7 @@ public:
 private:
 	sf::RectangleShape body;
 	sf::Vector2f velocity;
-	int typeCaisse = 0; // 1 = Munition / 2 = Heal
+	int typeCaisse = 0; // 1 = Munition / 2 = Heal 
 };
 
 
