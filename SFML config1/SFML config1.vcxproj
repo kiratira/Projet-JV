@@ -181,10 +181,9 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AssetManager.cpp" />
-    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Caisse.cpp" />
     <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="Displayable.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="inventory.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
@@ -198,10 +197,9 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="Button.h" />
     <ClInclude Include="Caisse.h" />
     <ClInclude Include="Collider.h" />
-    <ClInclude Include="Displayable.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="MapGenerator.h" />
