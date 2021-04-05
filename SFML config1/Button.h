@@ -1,20 +1,28 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Displayable.h"
+#include <iostream>
+#include "UI.h"
+
 
 class Button
 {
 public:
-	Button(sf::Texture* normal, sf::Texture* clicked, std::string content,sf::Vector2f size, sf::Vector2f position);
+	Button(sf::Texture* normal, sf::Texture* clicked, std::string content,sf::Vector2f size, sf::Vector2f position,int type);
 	~Button();
 
-	void checkClicked(sf::Vector2f mousePos);
-	void setState(bool state) { this->state = state; };
+	bool checkClicked(sf::Vector2i mousePos, bool state);
+	void setState(bool state);
 	void setText(std::string content);
+	void Draw(sf::RenderWindow& window) { window.draw(*currentSprite); };
 
 	bool getState() { return state; };
 	sf::RectangleShape* GetSprite() { return currentSprite; };
 	sf::Text* GetText() { return &text; }
+	int GetType() { return type; }
+
+	virtual void Add();
+	virtual void Minus();
+
 
 private:
 	sf::RectangleShape normal;
@@ -22,6 +30,7 @@ private:
 	sf::RectangleShape* currentSprite;
 	sf::Text text;
 	bool state;
+	int type; // 0 = Menu | 1 = AddButton |  -1 = MinusButton
 };
 
 

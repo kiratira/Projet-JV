@@ -7,8 +7,9 @@
 #include "MapGenerator.h"
 #include "Missile.h"
 #include "Caisse.h"
+#include "GUI.h"
 
-
+#define VectZero sf::Vector2f(0,0)
 
 
 void ClearVector(std::vector<Platforme*> vect);
@@ -79,6 +80,13 @@ int main()
     sound.setBuffer(AssetManager::GetSoundBuffer("boom.ogg"));
     */
 
+    Compteur* testCompteur = new Compteur(&AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(50, 0), 0);
+    
+
+    Button* testButton = new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),"", sf::Vector2f(32,32), sf::Vector2f(0,0), testCompteur);
+
+    
+
 
 #pragma endregion
 
@@ -127,10 +135,36 @@ int main()
                 {
                 case sf::Keyboard::T:
                     canChange = true;
+                    break;
                 }
                 break;
+
+            case sf::Event::EventType::MouseButtonPressed:
+                switch (event.mouseButton.button)
+                {
+                case sf::Mouse::Left:
+                    if (testButton->checkClicked(sf::Mouse::getPosition(window), true))
+                    {
+                        if (testButton->GetType() == 1)testButton->Add();
+                        else if (testButton->GetType() == -1)testButton->Minus();
+                    }
+                    break;
+                }
+                break;
+            case sf::Event::EventType::MouseButtonReleased:
+                switch (event.mouseButton.button)
+                {
+                case sf::Mouse::Left:
+                    testButton->checkClicked(sf::Mouse::getPosition(window), false);
+                    break;
+                }
+                break;
+                
             }
+            
+
         }
+    
 
 #pragma region Update des entitées
 
@@ -159,7 +193,6 @@ int main()
         unsigned int cptE = 0;
         unsigned int cptM = 0;
         unsigned int cptPl = 0;
-
 
         for (Platforme* platforme : platformes)
         {
@@ -295,16 +328,24 @@ int main()
             caisse->Draw(window);
         }
 
+        testCompteur->Draw(window);
+        testButton->Draw(window);
+
         window.display();
 
 #pragma endregion
     
     }
+        
 
     ClearVector(platformes);
     ClearVector(missiles);
     ClearVector(players);
     ClearVector(caisses);
+
+
+    delete(testButton);
+    delete(testCompteur);
 
 
     return 0;

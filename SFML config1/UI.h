@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Displayable
+class UI
 {
 
 };
@@ -9,7 +9,7 @@ class Displayable
 class Compteur 
 {
 public:
-	Compteur(sf::Vector2f position, int value);
+	Compteur(sf::Font* font, sf::Vector2f position, int value);
 	~Compteur();
 
 	void SetValue(int value);
