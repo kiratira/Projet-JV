@@ -56,7 +56,7 @@ int main()
     Equipe* equipe1 = new Equipe(1);
     Equipe* equipe2 = new Equipe(2);
 
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, equipe1));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(256, 256) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, equipe1));
     players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 200.0f, 100, equipe2));
     players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 200.0f, 100, equipe2));
 
