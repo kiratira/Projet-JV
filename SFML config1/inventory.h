@@ -12,6 +12,7 @@ public:
 
 	bool UseMunition(std::string type);
 	int GetMunition(std::string type);
+	std::map<std::string, int> GetAllMunitions() { return m_munitions; }
 
 
 private:

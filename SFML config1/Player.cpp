@@ -1,13 +1,13 @@
 #include "Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight, int maxLife, int tagEquipe) :
+Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight, int maxLife, Equipe* equipe) :
 	animation(texture, imageCount, switchTime), Rigidbody(&body)
 {
 	this->speed = speed;
 	this->jumpHeight = jumpHeight;
 	this->maxLife = maxLife;
 	this->life = maxLife;
-	this->tagEquipe = tagEquipe;
+	this->equipe = equipe;
 
 	//animation
 	row = 0;
@@ -45,17 +45,21 @@ void Player::Update(float deltaTime)
 
 	velocity.y += 981.0f * deltaTime; //Gravite
 
-	if (velocity.x == 0.0f)
-		row = 0;
-	else
-	{
-		row = 1;
-
-		if (velocity.x > 0.0f)
-			faceRight = true;
+	if (!canJump) row = 2;
+	else {
+		if (velocity.x == 0.0f)
+			row = 0;
 		else
-			faceRight = false;
+		{
+			row = 1;
+
+			if (velocity.x > 0.0f)
+				faceRight = true;
+			else
+				faceRight = false;
+		}
 	}
+	
 
 	animation.Update(row, deltaTime, faceRight);
 	body.setTextureRect(animation.uvRect);
@@ -102,10 +106,19 @@ bool Player::TakeDamage(int damage)
 
 bool Player::Shoot(std::string type)
 {
-	return inventaire.UseMunition(type);
+	return equipe->GetInventaire()->UseMunition(type);
 }
 
 int Player::GetMunition(std::string type)
 {
-	return inventaire.GetMunition(type);
+	return equipe->GetInventaire()->GetMunition(type);
+}
+
+Equipe::Equipe(int tagEquipe)
+{
+	this->tagEquipe = tagEquipe;
+}
+
+Equipe::~Equipe()
+{
 }

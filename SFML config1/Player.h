@@ -7,10 +7,27 @@
 #include "inventory.h"
 #include "Rigidbody.h"
 
+class Equipe
+{
+public:
+	Equipe(int tagEquipe);
+	~Equipe();
+
+
+	inventory* GetInventaire() { return &inventaire; }
+	int* GetTagEquipe() { return &tagEquipe; }
+
+private:
+	inventory inventaire;
+	int tagEquipe;
+};
+
+
+
 class Player : public Rigidbody
 {
 public:
-	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, int tagEquipe);
+	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, Equipe* equipe);
 	~Player();
 
 
@@ -22,13 +39,13 @@ public:
 	void RecoverLife(int amount);
 	
 
-	int GetLife() { return life; }
+	int* GetLife() { return &life; }
 	bool IsFaceRight() { return faceRight; }
 	bool TakeDamage(int damage);
 	bool Shoot(std::string type);
 	int GetMunition(std::string type);
-	int GetTagEquipe() { return tagEquipe; }
-	inventory* GetInventaire() { return &inventaire; }
+	int* GetTagEquipe() { return equipe->GetTagEquipe(); }
+	Equipe* GetEquipe() { return equipe; }
 
 private:
 	sf::RectangleShape body;
@@ -45,8 +62,6 @@ private:
 	int life;
 	int maxLife = 100;
 
-	inventory inventaire;
-	int tagEquipe;
+	Equipe* equipe;
 
 };
-

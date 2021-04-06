@@ -76,6 +76,7 @@ public:
 
 	virtual void Add();
 	virtual void Minus();
+	virtual void Swap();
 
 
 private:
@@ -112,6 +113,18 @@ private:
 	Compteur* compteur;
 };
 
+class BoolButton : public Button
+{
+public:
+	BoolButton(sf::Texture* normal, sf::Texture* clicked, sf::Font* font, std::string content,int fontSize, sf::Vector2f size, sf::Vector2f position, std::vector<bool*> vect);
+	~BoolButton();
+
+	void Swap();
+
+private:
+	std::vector<bool*> vect;
+};
+
 class CaseInventaire
 {
 public:
@@ -119,6 +132,7 @@ public:
 	~CaseInventaire();
 
 	void Draw(sf::RenderWindow& window);
+	Compteur* GetCompteur() { return &nbre; }
 
 private:
 	sf::RectangleShape back;

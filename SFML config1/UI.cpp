@@ -126,6 +126,10 @@ void Button::Minus()
 {
 }
 
+void Button::Swap()
+{
+}
+
 
 AddButton::AddButton(sf::Texture* normal, sf::Texture* clicked, std::string content, sf::Vector2f size, sf::Vector2f position, Compteur* compteur) :
 	Button(normal, clicked,size, position, 1)
@@ -185,4 +189,20 @@ void CaseInventaire::Draw(sf::RenderWindow& window)
 	window.draw(back);
 	window.draw(image);
 	window.draw(nbre.GetText());
+}
+
+BoolButton::BoolButton(sf::Texture* normal, sf::Texture* clicked, sf::Font* font,std::string content, int fontSize, sf::Vector2f size, sf::Vector2f position, std::vector<bool*> vect) :
+	Button(normal, clicked, font, content, fontSize, size, position, 2)
+{
+	this->vect = vect;
+}
+
+BoolButton::~BoolButton()
+{
+}
+
+void BoolButton::Swap()
+{
+	for (bool* element : vect)
+		*element = !*element;
 }

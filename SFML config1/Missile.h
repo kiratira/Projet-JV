@@ -26,7 +26,7 @@ private:
 	sf::RectangleShape body;
 	sf::CircleShape explosion;
 	sf::Vector2f velocity;
-	sf::Vector2f force;
+	sf::Vector2f angle;
 	float power;
 	int damage;
 };

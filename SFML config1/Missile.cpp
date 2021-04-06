@@ -3,11 +3,11 @@
 
 #define PI 3.1416
 
-Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f force, float power, int damage) :
+Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f angle, float power, int damage) :
 	Rigidbody(&body)
 {
 	this->power = power;
-	this->force = force;
+	this->angle = angle;
 	this->damage = damage;
 
 	body.setSize(size);
@@ -28,7 +28,7 @@ Missile::~Missile()
 
 void Missile::Update(float deltaTime)
 {
-	velocity += force * power;
+	velocity += angle * power;
 	power = 0;
 	velocity.y += 981.0f * deltaTime; //Gravite
 	body.move(velocity * deltaTime);

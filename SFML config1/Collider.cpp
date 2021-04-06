@@ -100,7 +100,7 @@ bool Collider::CheckCollision(Collider& other)
     return false;
 }
 
-bool Collider::CheckCollisionCircle(Collider& other)
+bool Collider::CheckCollisionCircle(Collider& other, int radius)
 {
     sf::Vector2f otherPosition = other.GetPositionCircle();
     sf::Vector2f otherHalhSize = other.GetHalfSizeCircle();
@@ -110,7 +110,6 @@ bool Collider::CheckCollisionCircle(Collider& other)
     int intervalX = thisPosition.x - otherPosition.x;
     int intervalY = thisPosition.y - otherPosition.y;
     int interval = sqrt((intervalX * intervalX) + (intervalY * intervalY));
-    int radius = 100;
 
     //std::cout << radius << " " << intervalX << " " << intervalY << " " << interval << std::endl;
     if (interval < radius) return true;
