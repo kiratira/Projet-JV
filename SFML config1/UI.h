@@ -15,6 +15,7 @@ public:
 
 	void SetValue(int value);
 	void Draw(sf::RenderWindow& window) { window.draw(text); }
+	void SetPosition(sf::Vector2f position) { text.setPosition(position); }
 
 	int GetValue() { return value; }
 	sf::Text GetText() { return text; }
@@ -125,17 +126,21 @@ private:
 	std::vector<bool*> vect;
 };
 
-class CaseInventaire
+class CaseInventaire 
 {
 public:
-	CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Font* font, sf::Vector2f size, sf::Vector2f position);
+	CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Font* font, sf::Vector2f size, sf::Vector2f position, std::string type);
 	~CaseInventaire();
 
 	void Draw(sf::RenderWindow& window);
+
+	bool checkClicked(sf::Vector2i mousePos);
+	std::string* GetType() { return &type; }
 	Compteur* GetCompteur() { return &nbre; }
 
 private:
 	sf::RectangleShape back;
 	sf::RectangleShape image;
 	Compteur nbre;
+	std::string type;
 };

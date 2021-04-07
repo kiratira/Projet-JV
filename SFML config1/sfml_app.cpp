@@ -40,6 +40,8 @@ int main()
     std::vector<Caisse*> caisses;
     std::vector<Balle*> balles;
 
+    std::vector<CaseInventaire*> casesInventaire;
+
     Player* mainPlayer;
     unsigned int mainPlayernbre = 0;
     bool canChange = true;
@@ -48,6 +50,11 @@ int main()
     bool showInventaire = false;
     bool showViseur = false;
     bool isPressed = false;
+
+    bool showMenu = true;
+    bool showParametres = false;
+    bool showGame = true;
+    bool pause = false;
 
     std::string selectedWeapon = "Bazooka";
 
@@ -59,9 +66,9 @@ int main()
     Equipe* equipe1 = new Equipe(1);
     Equipe* equipe2 = new Equipe(2);
 
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, equipe1));
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 200.0f, 100, equipe2));
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 200.0f, 100, equipe2));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 80.0f, 100, equipe1));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 80.0f, 100, equipe2));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 80.0f, 100, equipe2));
 
 
     //MAIN PLAYER SELECTION
@@ -70,19 +77,19 @@ int main()
 
 
     //Test Generation Map
-    for (int y = 200; y < 404; y += 4)
+    for (int y = 200; y < 604; y += 8)
     {
-        for (int x = 0; x < 400; x += 4)
+        for (int x = 0; x < 400; x += 8)
         {
-            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(4, 4), sf::Vector2f(x, y), 1));
+            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
         }
     }
 
-    for (int y = 200; y < 304; y += 4)
+    for (int y = 200; y < 604; y += 8)
     {
-        for (int x = 440; x < 640; x += 4)
+        for (int x = 440; x < 600; x += 8)
         {
-            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(4, 4), sf::Vector2f(x, y), 0));
+            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
         }
     }
 
@@ -109,14 +116,19 @@ int main()
 
     Image* testInventaire = new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(window.getSize().x, window.getSize().y) * 0.45f, sf::Vector2f(window.getSize().x, window.getSize().y) * 0.9f);
     
-    //CaseInventaire* testCaseI = nullptr;
-    /*
-    for (std::map<std::string, int>::iterator it = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions().begin(); it != mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions().end(); it++)
+
+
+    std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions();
+    float cptCI = 0;
+    float sizeCase = 100;
+    for (std::map<std::string, int>::iterator it = inventaire.begin(); it !=inventaire.end(); it++)
     {
-        //testCaseI = new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first +".png"), &AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(100, 100), sf::Vector2f(100, 100));
-        //testCaseI->GetCompteur()->SetValue(it->second);
+        std::cout << it->first << std::endl;
+        casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first +".png"), &AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase,0)*cptCI,it->first));
+        casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+        cptCI++;
     }
-    */
+    
 
 
     sf::RectangleShape viseur;
@@ -154,20 +166,6 @@ int main()
                     SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
                     mainPlayer = players[mainPlayernbre];
                     break;
-                case sf::Keyboard::G: // SHOOT    
-                    viseur.setTexture(&AssetManager::GetTexture(selectedWeapon + ".png"));
-                    if (mainPlayer->IsFaceRight())
-                    {
-                        viseur.setScale(sf::Vector2f(1, 1));
-                    }
-                    else
-                    {
-                        viseur.setScale(sf::Vector2f(-1, 1));
-                    }
-
-                    viseur.setPosition(mainPlayer->GetPosition());
-                    showViseur = true;
-                    break;
                 case sf::Keyboard::Up:
                     if(viseur.getRotation() <= 90 || viseur.getRotation() >= 270)viseur.rotate(600 * -deltaTime);
                     else viseur.setRotation(272);
@@ -204,7 +202,7 @@ int main()
                             sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
                             float power = PowerTimer.getElapsedTime().asMilliseconds();
                             if (!mainPlayer->IsFaceRight()) angle = -angle;                      
-                            missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), mainPlayer->GetPosition(), 50, angle, power));
+                            missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x,-mainPlayer->GetSize().y /2), 50, angle, power));
                         }
                         if (selectedWeapon == "Awp")
                         {
@@ -245,6 +243,19 @@ int main()
                             break;
                         }
                     }
+                    for (CaseInventaire* CI : casesInventaire)
+                    {
+                        if (CI->checkClicked(sf::Mouse::getPosition(window)))
+                        {
+                            selectedWeapon = *CI->GetType();
+                            showInventaire = false;
+                            viseur.setTexture(&AssetManager::GetTexture(*CI->GetType() + ".png"));
+                            if (mainPlayer->IsFaceRight())viseur.setScale(sf::Vector2f(1, 1));       
+                            else viseur.setScale(sf::Vector2f(-1, 1));
+                            viseur.setPosition(mainPlayer->GetPosition());
+                            showViseur = true;
+                        }
+                    }
                     break;
                 }
                 break;
@@ -262,177 +273,228 @@ int main()
 
         }
     
+        if (showGame) 
+        {
 
 #pragma region Update des entitées
 
-        for (Player* player : players)
-        {
-            player->Update(deltaTime);
-        }
+            for (Player* player : players)
+            {
+                player->Update(deltaTime);
+            }
 
-        for (Missile* missile : missiles)
-        {
-            missile->Update(deltaTime);
-        }
+            for (Missile* missile : missiles)
+            {
+                missile->Update(deltaTime);
+            }
 
-        for (Balle* balle : balles)
-        {
-            balle->Update(deltaTime);
-        }
+            for (Balle* balle : balles)
+            {
+                balle->Update(deltaTime);
+            }
 
-        for (Caisse* caisse : caisses)
-        {
-            caisse->Update(deltaTime);
-        }
+            for (Caisse* caisse : caisses)
+            {
+                caisse->Update(deltaTime);
+            }
 
 #pragma endregion      
 
 #pragma region CheckCollision
 
-        sf::Vector2f direction;
+            sf::Vector2f direction;
 
-        unsigned int cptP = 0;
-        unsigned int cptE = 0;
-        unsigned int cptM = 0;
-        unsigned int cptPl = 0;
-        unsigned int cptT = 0;
-
-
-        // !!!!!!!!!!!!! NETTOYER LES COLLISIONS AVEC DES POINTEURS + "FOR" pour retirer les pointeurs
-        
-        cptPl = 0;
-        for (Player* player : players)
-        {
-            cptT = 0;
-            for (Balle* balle : balles)
-            {
-                Collider balleCol = balle->GetCollider();
-                if (player->GetCollider().CheckCollision(balleCol))
-                {              
-                    if (player->TakeDamage(balle->GetDamage()))
-                    {
-                        delete player;
-                        players.erase(players.begin() + cptPl);
-
-                        CheckPlayerAlive(players);
-                    }                  
-                    delete(balle);
-                    balles.erase(balles.begin() + cptT);
-                    break;
-                }      
-                cptT++;
-            }   
-            cptPl++;
-        }
-        
+            unsigned int cptP = 0;
+            unsigned int cptE = 0;
+            unsigned int cptM = 0;
+            unsigned int cptPl = 0;
+            unsigned int cptT = 0;
 
 
-        for (Platforme* platforme : platformes)
-        {
+            // !!!!!!!!!!!!! NETTOYER LES COLLISIONS AVEC DES POINTEURS + "FOR" pour retirer les pointeurs
+
             cptPl = 0;
-            for (Player* player : players) //CHECK DES PLAYERS / SOL
-            {
-                Collider playerCol = player->GetCollider();
-
-                if (platforme->GetCollider().CheckCollision(playerCol, direction, 1.0f)) // UNIQUEMENT PLAYER
-                {
-                    if (platforme->GetLayer() == 0) //DESTRUCTION EN FCT DU LAYER
-                    {
-                        player->Oncollision(direction);
-                        delete(platforme);
-                        platformes.erase(platformes.begin() + cptP);
-                    }
-                    else
-                    {
-                        player->Oncollision(direction);
-                    }
-                }
-            }
-
-            cptM = 0;
-            for (Missile* missile : missiles) //CHECK DES MISSILES / SOL
-            {
-                Collider missileCol = missile->GetCollider();
-
-                if (platforme->GetCollider().CheckCollision(missileCol))
-                {
-                    Collider exploCol = missile->GetExploCollider();
-                    
-                    //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
-                    //sound.play();
-
-                    for (int i = 0; i < 7; i++)
-                    {
-                        cptE = 0;
-                        for (Platforme* platforme : platformes)
-                        {
-                            if (platforme->GetCollider().CheckCollisionCircle(exploCol,exploCol.GetHalfSizeCircle().x))
-                            {
-                                delete(platforme);
-                                platformes.erase(platformes.begin() + cptE);
-                            }
-
-                            cptE++;
-                        }
-                    }
-                    cptPl = 0;
-                    for (Player* player : players)
-                    {
-                        if (player->GetCollider().CheckCollisionCircle(exploCol, exploCol.GetHalfSizeCircle().x))
-                            if (player->TakeDamage(missile->GetDamage()))
-                            {
-                                delete player;
-                                players.erase(players.begin() + cptPl);
-
-                                CheckPlayerAlive(players);
-                            }
-                        cptPl++;
-                    }
-
-                    delete(missile);
-                    missiles.erase(missiles.begin() + cptM);
-                }
-                cptM++;
-            }
-
-            for (Caisse* caisse : caisses)
-            {
-                Collider caisseCol = caisse->GetCollider();
-                if (platforme->GetCollider().CheckCollision(caisseCol, direction, 1.0f)) {
-                    caisse->Oncollision(direction);
-                }
-            }
-
-            cptP++;
-        }
-        unsigned int cptC = 0;
-        for (Caisse* caisse : caisses)
-        {
             for (Player* player : players)
             {
-                Collider playerCol = player->GetCollider();
-
-                if (caisse->GetCollider().CheckCollision(playerCol))
+                cptT = 0;
+                for (Balle* balle : balles)
                 {
-                    if (caisse->GetTypeCaisse() == 1)
+                    Collider balleCol = balle->GetCollider();
+                    if (player->GetCollider().CheckCollision(&balleCol))
                     {
-                        player->GetEquipe()->GetInventaire()->AddMunition(caisse->GetTypeMunition(), caisse->GetNbreMunition());
-                        delete(caisse);
-                        caisses.erase(caisses.begin() + cptC);
-                    }
-                    else if (caisse->GetTypeCaisse() == 2)
-                    {
-                        player->RecoverLife(caisse->GetNbreHeal());
-                        delete(caisse);
-                        caisses.erase(caisses.begin() + cptC);
-                    }
+                        if (player->TakeDamage(balle->GetDamage()))
+                        {
+                            delete player;
+                            players.erase(players.begin() + cptPl);
 
+                            CheckPlayerAlive(players);
+                        }
+                        delete(balle);
+                        balles.erase(balles.begin() + cptT);
+                        break;
+                    }
+                    cptT++;
                 }
+
+                cptM = 0;
+                for (Missile* missile : missiles) //CHECK DES MISSILES / SOL
+                {
+                    Collider missileCol = missile->GetCollider();
+
+                    if (player->GetCollider().CheckCollision(&missileCol))
+                    {
+                        Collider exploCol = missile->GetExploCollider();
+
+                        //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
+                        //sound.play();
+
+                        for (int i = 0; i < 7; i++)
+                        {
+                            cptE = 0;
+                            for (Platforme* platforme : platformes)
+                            {
+                                if (platforme->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                                {
+                                    delete(platforme);
+                                    platformes.erase(platformes.begin() + cptE);
+                                }
+
+                                cptE++;
+                            }
+                        }
+                        cptPl = 0;
+                        for (Player* player : players)
+                        {
+                            if (player->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                                if (player->TakeDamage(missile->GetDamage()))
+                                {
+                                    delete player;
+                                    players.erase(players.begin() + cptPl);
+
+                                    CheckPlayerAlive(players);
+                                }
+                            cptPl++;
+                        }
+
+                        delete(missile);
+                        missiles.erase(missiles.begin() + cptM);
+                    }
+                    cptM++;
+                }
+
+                cptPl++;
             }
-            cptC++;
-        }
+
+
+
+            for (Platforme* platforme : platformes)
+            {
+                cptPl = 0;
+                for (Player* player : players) //CHECK DES PLAYERS / SOL
+                {
+                    Collider playerCol = player->GetCollider();
+
+                    if (platforme->GetCollider().CheckCollision(&playerCol, &direction, 1.0f)) // UNIQUEMENT PLAYER
+                    {
+                        if (platforme->GetLayer() == 0) //DESTRUCTION EN FCT DU LAYER
+                        {
+                            player->Oncollision(direction);
+                            delete(platforme);
+                            platformes.erase(platformes.begin() + cptP);
+                        }
+                        else
+                        {
+                            player->Oncollision(direction);
+                        }
+                    }
+                }
+
+                cptM = 0;
+                for (Missile* missile : missiles) //CHECK DES MISSILES / SOL
+                {
+                    Collider missileCol = missile->GetCollider();
+
+                    if (platforme->GetCollider().CheckCollision(&missileCol))
+                    {
+                        Collider exploCol = missile->GetExploCollider();
+
+                        //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
+                        //sound.play();
+
+                        for (int i = 0; i < 7; i++)
+                        {
+                            cptE = 0;
+                            for (Platforme* platforme : platformes)
+                            {
+                                if (platforme->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                                {
+                                    delete(platforme);
+                                    platformes.erase(platformes.begin() + cptE);
+                                }
+
+                                cptE++;
+                            }
+                        }
+                        cptPl = 0;
+                        for (Player* player : players)
+                        {
+                            if (player->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                                if (player->TakeDamage(missile->GetDamage()))
+                                {
+                                    delete player;
+                                    players.erase(players.begin() + cptPl);
+
+                                    CheckPlayerAlive(players);
+                                }
+                            cptPl++;
+                        }
+
+                        delete(missile);
+                        missiles.erase(missiles.begin() + cptM);
+                    }
+                    cptM++;
+                }
+
+                for (Caisse* caisse : caisses)
+                {
+                    Collider caisseCol = caisse->GetCollider();
+                    if (platforme->GetCollider().CheckCollision(&caisseCol, &direction, 1.0f)) {
+                        caisse->Oncollision(direction);
+                    }
+                }
+
+                cptP++;
+            }
+            unsigned int cptC = 0;
+            for (Caisse* caisse : caisses)
+            {
+                for (Player* player : players)
+                {
+                    Collider playerCol = player->GetCollider();
+
+                    if (caisse->GetCollider().CheckCollision(&playerCol))
+                    {
+                        if (caisse->GetTypeCaisse() == 1)
+                        {
+                            player->GetEquipe()->GetInventaire()->AddMunition(caisse->GetTypeMunition(), caisse->GetNbreMunition());
+                            delete(caisse);
+                            caisses.erase(caisses.begin() + cptC);
+                        }
+                        else if (caisse->GetTypeCaisse() == 2)
+                        {
+                            player->RecoverLife(caisse->GetNbreHeal());
+                            delete(caisse);
+                            caisses.erase(caisses.begin() + cptC);
+                        }
+
+                    }
+                }
+                cptC++;
+            }
 
 #pragma endregion
+
+        }
 
 #pragma region Camera + Affichage
 
@@ -442,12 +504,12 @@ int main()
 
         window.clear();
 
-        //entité view
-        if (startParty)
+        //GameView
+        if (showGame)
         {
             window.setView(view);
 
-            if(showViseur) window.draw(viseur);
+            if (showViseur) window.draw(viseur);
             for (Player* player : players)
             {
                 player->Draw(window);
@@ -472,26 +534,22 @@ int main()
             {
                 balle->Draw(window);
             }
+            //UI view
+            window.setView(Uiview);
+
+            testImage->Draw(window);
+            testCompteur->Draw(window);
+            testButton->Draw(window);
+
+            if (showInventaire) {
+
+                testInventaire->Draw(window);
+                for (CaseInventaire* CI : casesInventaire)
+                {
+                    CI->Draw(window);
+                }
+            }
         }
-       
-
-        //UI view
-        window.setView(Uiview);
-
-        testImage->Draw(window);
-        testCompteur->Draw(window);
-        testButton->Draw(window);
-
-        if (showInventaire) {
-
-            testInventaire->Draw(window);
-        }
-
-        //if(testCaseI != nullptr)testCaseI->Draw(window); 
-        
-       
-
-
          
         window.display();
 
@@ -510,7 +568,6 @@ int main()
     delete(testImage);
     delete(testCompteur);
     //delete(testInventaire);
-
 
     return 0;
 }
@@ -562,7 +619,7 @@ bool CheckPlayerAlive(std::vector<Player*> players) {
 
     if (players.size() == 1)
     {
-        std::cout << "GG l'Equipe " << players[0]->GetTagEquipe() << " a gagne" << std::endl;
+        std::cout << "GG l'Equipe " << players[0]->GetEquipe()->GetNom() << " a gagne" << std::endl;
         return 0;
     }
     else if (players.size() == 0) {
@@ -578,7 +635,7 @@ bool CheckPlayerAlive(std::vector<Player*> players) {
         
         if (i == players.size() - 2)
         {
-            std::cout << "GG l'Equipe " << players[i]->GetTagEquipe() << " a gagne" << std::endl;
+            std::cout << "GG l'Equipe " << players[i]->GetEquipe()->GetNom() << " a gagne" << std::endl;
             return 0;
         }
     }

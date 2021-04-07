@@ -166,17 +166,19 @@ void MinusButton::Minus()
 
 }
 
-CaseInventaire::CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Font* font, sf::Vector2f size, sf::Vector2f position) :
+CaseInventaire::CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Font* font, sf::Vector2f size, sf::Vector2f position, std::string type) :
 	nbre(font,sf::Vector2f(size),0,32,sf::Color::Blue)
 {
 	this->back.setTexture(back);
 	this->image.setTexture(image);
 	this->back.setSize(size);
-	this->image.setSize(size * 0.8f);
-	this->back.setOrigin(size * 0.5f);
-	this->image.setOrigin(size * 0.5f);
+	this->image.setSize(size*0.8f);
 	this->back.setPosition(position);
 	this->image.setPosition(position);
+
+	this->nbre.SetPosition(position + (size*0.6f));
+
+	this->type = type;
 
 }
 
@@ -189,6 +191,16 @@ void CaseInventaire::Draw(sf::RenderWindow& window)
 	window.draw(back);
 	window.draw(image);
 	window.draw(nbre.GetText());
+}
+
+bool CaseInventaire::checkClicked(sf::Vector2i mousePos)
+{
+	if (mousePos.x > back.getPosition().x && mousePos.x < (back.getPosition().x + back.getSize().x)) {
+		if (mousePos.y > back.getPosition().y && mousePos.y < (back.getPosition().y + back.getSize().y)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 BoolButton::BoolButton(sf::Texture* normal, sf::Texture* clicked, sf::Font* font,std::string content, int fontSize, sf::Vector2f size, sf::Vector2f position, std::vector<bool*> vect) :

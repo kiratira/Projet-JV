@@ -16,10 +16,12 @@ public:
 
 	inventory* GetInventaire() { return &inventaire; }
 	int* GetTagEquipe() { return &tagEquipe; }
+	std::string* GetNom() { return &nom; }
 
 private:
 	inventory inventaire;
 	int tagEquipe;
+	std::string nom;
 };
 
 
