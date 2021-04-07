@@ -28,7 +28,7 @@ int main()
     sf::View Inventaireview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(2048, 1080));
     AssetManager a_manager;
     //GUI ui_manager;
-    //MapGenerator a_generator;
+    MapGenerator map;
     sf::Clock clockDeltaTime;
     sf::Clock clockTimer;
     sf::Clock PowerTimer;
@@ -77,21 +77,9 @@ int main()
 
 
     //Test Generation Map
-    for (int y = 200; y < 604; y += 8)
-    {
-        for (int x = 0; x < 400; x += 8)
-        {
-            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
-        }
-    }
 
-    for (int y = 200; y < 604; y += 8)
-    {
-        for (int x = 440; x < 600; x += 8)
-        {
-            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
-        }
-    }
+    map.MapGen(platformes);
+
 
     //caisse de munition
 
@@ -145,7 +133,7 @@ int main()
 
         testCompteur->SetValue(20 - clockTimer.getElapsedTime().asSeconds());
 
-        if (deltaTime > 1.0f / 20.0f) deltaTime = 1.0f / 20.0f; //bug de la fenêtre
+        if (deltaTime > 1.0f / 20.0f) deltaTime = 1.0f / 20.0f; //bug de la fenï¿½tre
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -276,7 +264,7 @@ int main()
         if (showGame) 
         {
 
-#pragma region Update des entitées
+#pragma region Update des entitï¿½es
 
             for (Player* player : players)
             {

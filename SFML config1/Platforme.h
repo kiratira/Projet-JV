@@ -5,7 +5,7 @@
 class Platforme
 {
 public:
-	Platforme(sf::Texture* texture, sf::Vector2f size, sf::Vector2f position,unsigned int layer);
+	Platforme(const std::string img, sf::Vector2f size, sf::Vector2f position,unsigned int layer);
 	~Platforme();
 
 	void Draw(sf::RenderWindow& window);
