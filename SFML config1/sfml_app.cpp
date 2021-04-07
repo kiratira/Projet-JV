@@ -28,7 +28,7 @@ int main()
     sf::View Inventaireview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(2048, 1080));
     AssetManager a_manager;
     //GUI ui_manager;
-    //MapGenerator a_generator;
+    MapGenerator map;
     sf::Clock clockDeltaTime;
     sf::Clock clockTimer;
     sf::Clock PowerTimer;
@@ -70,21 +70,9 @@ int main()
 
 
     //Test Generation Map
-    for (int y = 200; y < 404; y += 4)
-    {
-        for (int x = 0; x < 400; x += 4)
-        {
-            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(4, 4), sf::Vector2f(x, y), 1));
-        }
-    }
 
-    for (int y = 200; y < 304; y += 4)
-    {
-        for (int x = 440; x < 640; x += 4)
-        {
-            platformes.push_back(new Platforme(&AssetManager::GetTexture("PixelSol.png"), sf::Vector2f(4, 4), sf::Vector2f(x, y), 0));
-        }
-    }
+    map.MapGen(platformes);
+
 
     //caisse de munition
 

@@ -1,4 +1,5 @@
 #include "MapGenerator.h"
+#include "AssetManager.h"
 #include <assert.h>
 
 MapGenerator* MapGenerator::sInstance = nullptr;
@@ -13,16 +14,23 @@ MapGenerator::~MapGenerator()
 {
 }
 
-void MapGenerator::BlockGeneration(sf::Texture* texture, sf::Vector2f sizeTexture, sf::Vector2f size)
+void MapGenerator::MapGen(std::vector<Platforme*> &platformes)
 {
-	auto& pVector = sInstance->m_Platformes;
 
-	for (int y = 0; y < size.y; y += sizeTexture.y)
-	{
-		for (int x = 0; x < size.x; x += sizeTexture.x)
-		{
-			//pVector.push_back(new Platforme(texture, sizeTexture, sf::Vector2f(x, y)));
-		}			
-	}
+    for (int y = 200; y < 404; y += 4)
+    {
+        for (int x = 0; x < 400; x += 4)
+        {
+            platformes.push_back(new Platforme("PixelSol.png", sf::Vector2f(4, 4), sf::Vector2f(x, y), 1));
+        }
+    }
+
+    for (int y = 200; y < 304; y += 4)
+    {
+        for (int x = 440; x < 640; x += 4)
+        {
+            platformes.push_back(new Platforme("PixelSol.png", sf::Vector2f(4, 4), sf::Vector2f(x, y), 0));
+        }
+    }
 }
 
