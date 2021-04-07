@@ -44,7 +44,7 @@ bool Collider::CheckCollision(Collider& other,sf::Vector2f& direction , float pu
             if (deltaX > 0.0f)
             {
                 Move(intersectX * (1.0f - push), 0.0f);
-                other.Move(-intersectX * push, 0.0f);
+                other.Move(-intersectX * push, -0.65f);
 
                 direction.x = 1.0f;
                 direction.y = 0.0f;
@@ -52,7 +52,7 @@ bool Collider::CheckCollision(Collider& other,sf::Vector2f& direction , float pu
             else
             {
                 Move(-intersectX * (1.0f - push), 0.0f);
-                other.Move(intersectX * push, 0.0f);
+                other.Move(intersectX * push, -0.65f);
 
                 direction.x = -1.0f;
                 direction.y = 0.0f;

@@ -49,7 +49,7 @@ int main()
     bool showViseur = false;
     bool isPressed = false;
 
-    std::string selectedWeapon = "Awp";
+    std::string selectedWeapon = "Bazooka";
 
 #pragma region TestZONE
     
