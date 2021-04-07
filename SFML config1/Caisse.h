@@ -1,15 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Collider.h"
+#include "Rigidbody.h"
 
-class Caisse
+class Caisse : public Rigidbody
 {
 public:
 	Caisse(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint,int type);
 	~Caisse();
-
-	Collider GetCollider() { return Collider(&body); }
-
 
 	void Update(float deltaTime);
 	void Draw(sf::RenderWindow& window);

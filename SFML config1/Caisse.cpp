@@ -1,6 +1,7 @@
 #include "Caisse.h"
 
-Caisse::Caisse(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint,int typeCaisse)
+Caisse::Caisse(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, int typeCaisse) :
+	Rigidbody(&body)
 {
 	body.setTexture(texture);
 	body.setSize(size);

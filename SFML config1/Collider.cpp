@@ -2,14 +2,17 @@
 
 
 
+
 Collider::Collider(sf::RectangleShape* body) 
 {
     this->body = body;
+    this->bodyC = nullptr;
 }
 
 Collider::Collider(sf::CircleShape* body)
 {
     this->bodyC = body;
+    this->body = nullptr;
 }
 
 
@@ -41,7 +44,7 @@ bool Collider::CheckCollision(Collider& other,sf::Vector2f& direction , float pu
             if (deltaX > 0.0f)
             {
                 Move(intersectX * (1.0f - push), 0.0f);
-                other.Move(-intersectX * push, 0.0f);
+                other.Move(-intersectX * push, -0.65f);
 
                 direction.x = 1.0f;
                 direction.y = 0.0f;
@@ -49,7 +52,7 @@ bool Collider::CheckCollision(Collider& other,sf::Vector2f& direction , float pu
             else
             {
                 Move(-intersectX * (1.0f - push), 0.0f);
-                other.Move(intersectX * push, 0.0f);
+                other.Move(intersectX * push, -0.65f);
 
                 direction.x = -1.0f;
                 direction.y = 0.0f;
@@ -99,20 +102,19 @@ bool Collider::CheckCollision(Collider& other)
     return false;
 }
 
-bool Collider::CheckCollisionCircle(Collider& other)
+bool Collider::CheckCollisionCircle(Collider& other, int radius)
 {
     sf::Vector2f otherPosition = other.GetPositionCircle();
     sf::Vector2f otherHalhSize = other.GetHalfSizeCircle();
     sf::Vector2f thisPosition = GetPosition();
     sf::Vector2f thisHalhSize = GetHalfSize();
 
-    float deltaX = otherPosition.x - thisPosition.x;
-    float deltaY = otherPosition.y - thisPosition.y;
+    int intervalX = thisPosition.x - otherPosition.x;
+    int intervalY = thisPosition.y - otherPosition.y;
+    int interval = sqrt((intervalX * intervalX) + (intervalY * intervalY));
 
-    float intersectX = abs(deltaX) - (otherHalhSize.x + thisHalhSize.x);
-    float intersectY = abs(deltaY) - (otherHalhSize.y + thisHalhSize.y);
-
-    if (intersectX < 0.0f && intersectY < 0.0f) return true;
+    //std::cout << radius << " " << intervalX << " " << intervalY << " " << interval << std::endl;
+    if (interval < radius) return true;
 
     return false;
 }

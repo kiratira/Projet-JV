@@ -5,30 +5,48 @@
 #include "Animation.h"
 #include "Collider.h"
 #include "inventory.h"
+#include "Rigidbody.h"
 
-class Player
+class Equipe
 {
 public:
-	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, int tagEquipe);
+	Equipe(int tagEquipe);
+	~Equipe();
+
+
+	inventory* GetInventaire() { return &inventaire; }
+	int* GetTagEquipe() { return &tagEquipe; }
+
+private:
+	inventory inventaire;
+	int tagEquipe;
+};
+
+
+
+class Player : public Rigidbody
+{
+public:
+	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, Equipe* equipe);
 	~Player();
 
 
 	void Update(float deltaTime);
-	void Draw(sf::RenderWindow& window);
+	void Draw(sf::RenderWindow& window) { window.draw(body); };
 	void Oncollision(sf::Vector2f direction);
-	void SetMovement(bool state);
+
+	void SetMovement(bool state) { canMove = state; };
 	void RecoverLife(int amount);
 	
 
-	sf::Vector2f GetPosition() { return body.getPosition(); }
-	Collider GetCollider() { return Collider(&body); }
-	int GetLife() { return life; }
+	int* GetLife() { return &life; }
 	bool IsFaceRight() { return faceRight; }
 	bool TakeDamage(int damage);
 	bool Shoot(std::string type);
 	int GetMunition(std::string type);
-	int GetTagEquipe() { return tagEquipe; }
-	inventory* GetInventaire() { return &inventaire; }
+	int* GetTagEquipe() { return equipe->GetTagEquipe(); }
+	Equipe* GetEquipe() { return equipe; }
+	sf::Vector2f GetSize() { return body.getSize(); }
 
 private:
 	sf::RectangleShape body;
@@ -45,8 +63,6 @@ private:
 	int life;
 	int maxLife = 100;
 
-	inventory inventaire;
-	int tagEquipe;
+	Equipe* equipe;
 
 };
-

@@ -1,13 +1,13 @@
-#include "Missile.h"
+#include "Projectile.h"
 
 
 #define PI 3.1416
 
-Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f force, float power, int damage)
+Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo ,sf::Vector2f angle, float power) :
+	Rigidbody(&body)
 {
 	this->power = power;
-	this->force = force;
-	this->damage = damage;
+	this->angle = angle;
 
 	body.setSize(size);
 	body.setTexture(texture);
@@ -27,7 +27,7 @@ Missile::~Missile()
 
 void Missile::Update(float deltaTime)
 {
-	velocity += force * power;
+	velocity += angle * power;
 	power = 0;
 	velocity.y += 981.0f * deltaTime; //Gravite
 	body.move(velocity * deltaTime);
@@ -46,3 +46,28 @@ void Missile::DrawExplosion(sf::RenderWindow& window)
 	window.draw(explosion);
 }
 
+Balle::Balle( sf::Vector2f spawnPoint, sf::Vector2f angle) :
+	Rigidbody(&body)
+{
+	body.setSize(sf::Vector2f(6, 2));
+	body.setOrigin(0, 1);
+	body.setPosition(spawnPoint);
+	this->angle = angle;
+}
+
+Balle::~Balle()
+{
+}
+
+void Balle::Update(float deltaTime)
+{
+	velocity += angle * power;
+	power = 0;
+	velocity.y += 981.0f * deltaTime; //Gravite
+	body.move(velocity * deltaTime);
+}
+
+void Balle::Draw(sf::RenderWindow& window)
+{
+	window.draw(body);
+}
