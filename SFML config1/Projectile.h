@@ -5,11 +5,12 @@
 #include "Math.h"
 #include "Rigidbody.h"
 
+
 class Missile : public Rigidbody
 {
 public:
 
-	Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo, sf::Vector2f angle, float power, int damage);
+	Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo, sf::Vector2f angle, float power);
 	~Missile();
 
 	void Update(float deltaTime);
@@ -28,6 +29,26 @@ private:
 	sf::Vector2f velocity;
 	sf::Vector2f angle;
 	float power;
-	int damage;
+	int damage = 50;
+};
+
+
+class Balle : public Rigidbody
+{
+public:
+	Balle(sf::Vector2f spawnPoint, sf::Vector2f angle);
+	~Balle();
+
+	void Update(float deltaTime);
+	void Draw(sf::RenderWindow& window);
+
+	int GetDamage() { return damage; }
+
+private:
+	sf::RectangleShape body;
+	sf::Vector2f velocity;
+	sf::Vector2f angle;
+	float power = 8000;
+	int damage = 35;
 };
 

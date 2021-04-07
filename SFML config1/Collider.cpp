@@ -6,11 +6,13 @@
 Collider::Collider(sf::RectangleShape* body) 
 {
     this->body = body;
+    this->bodyC = nullptr;
 }
 
 Collider::Collider(sf::CircleShape* body)
 {
     this->bodyC = body;
+    this->body = nullptr;
 }
 
 

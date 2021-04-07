@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "Platforme.h"
 #include "MapGenerator.h"
-#include "Missile.h"
+#include "Projectile.h"
 #include "Caisse.h"
 #include "UI.h"
 
@@ -38,6 +38,7 @@ int main()
     std::vector<Platforme*> platformes;
     std::vector<Missile*> missiles;
     std::vector<Caisse*> caisses;
+    std::vector<Balle*> balles;
 
     Player* mainPlayer;
     unsigned int mainPlayernbre = 0;
@@ -48,6 +49,8 @@ int main()
     bool showViseur = false;
     bool isPressed = false;
 
+    std::string selectedWeapon = "Awp";
+
 #pragma region TestZONE
     
 
@@ -56,7 +59,7 @@ int main()
     Equipe* equipe1 = new Equipe(1);
     Equipe* equipe2 = new Equipe(2);
 
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(256, 256) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, equipe1));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 200.0f, 100, equipe1));
     players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 200.0f, 100, equipe2));
     players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 200.0f, 100, equipe2));
 
@@ -117,9 +120,8 @@ int main()
 
 
     sf::RectangleShape viseur;
-    viseur.setTexture(&AssetManager::GetTexture("Bazooka.png"));
-    viseur.setSize(sf::Vector2f(50, 50));
-    viseur.setOrigin(sf::Vector2f(0, 5));
+    viseur.setSize(sf::Vector2f(96, 32));
+    viseur.setOrigin(sf::Vector2f(0, mainPlayer->GetSize().y / 2));
 
 #pragma endregion
 
@@ -152,9 +154,16 @@ int main()
                     SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
                     mainPlayer = players[mainPlayernbre];
                     break;
-                case sf::Keyboard::G: // SHOOT                 
-                    if (mainPlayer->IsFaceRight())viseur.setOrigin(sf::Vector2f(0, viseur.getSize().y / 2));
-                    else  viseur.setOrigin(sf::Vector2f(viseur.getSize().x, viseur.getSize().y / 2));
+                case sf::Keyboard::G: // SHOOT    
+                    viseur.setTexture(&AssetManager::GetTexture(selectedWeapon + ".png"));
+                    if (mainPlayer->IsFaceRight())
+                    {
+                        viseur.setScale(sf::Vector2f(1, 1));
+                    }
+                    else
+                    {
+                        viseur.setScale(sf::Vector2f(-1, 1));
+                    }
 
                     viseur.setPosition(mainPlayer->GetPosition());
                     showViseur = true;
@@ -188,14 +197,28 @@ int main()
                     if (showViseur)
                     {
                         isPressed = false;
-                        if (mainPlayer->Shoot("Bazooka")) //modifier pour prendre l'arme
+                        if (selectedWeapon == "Bazooka") //modifier pour prendre l'arme
                         {
+                            mainPlayer->Shoot("Bazooka");
                             float theta = viseur.getRotation() * 3.1416 / 180;
                             sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
                             float power = PowerTimer.getElapsedTime().asMilliseconds();
-                            if (!mainPlayer->IsFaceRight()) angle = -angle;
-                            
-                            missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), mainPlayer->GetPosition(), 50, angle, power , 50));
+                            if (!mainPlayer->IsFaceRight()) angle = -angle;                      
+                            missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24), mainPlayer->GetPosition(), 50, angle, power));
+                        }
+                        if (selectedWeapon == "Awp")
+                        {
+                            mainPlayer->Shoot("Awp");
+                            sf::Vector2f position;
+                            float theta = viseur.getRotation() * 3.1416 / 180;
+                            sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
+                            if (mainPlayer->IsFaceRight())position = mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x + 2, 0);
+                            else
+                            {
+                                angle = -angle;
+                                position = mainPlayer->GetPosition() + sf::Vector2f(-mainPlayer->GetSize().x + 2, 0);
+                            }
+                            balles.push_back(new Balle(position, angle));
                         }
                         showViseur = false;
                         viseur.setRotation(0);
@@ -252,6 +275,11 @@ int main()
             missile->Update(deltaTime);
         }
 
+        for (Balle* balle : balles)
+        {
+            balle->Update(deltaTime);
+        }
+
         for (Caisse* caisse : caisses)
         {
             caisse->Update(deltaTime);
@@ -267,9 +295,41 @@ int main()
         unsigned int cptE = 0;
         unsigned int cptM = 0;
         unsigned int cptPl = 0;
+        unsigned int cptT = 0;
+
+
+        // !!!!!!!!!!!!! NETTOYER LES COLLISIONS AVEC DES POINTEURS + "FOR" pour retirer les pointeurs
+        
+        cptPl = 0;
+        for (Player* player : players)
+        {
+            cptT = 0;
+            for (Balle* balle : balles)
+            {
+                Collider balleCol = balle->GetCollider();
+                if (player->GetCollider().CheckCollision(balleCol))
+                {              
+                    if (player->TakeDamage(balle->GetDamage()))
+                    {
+                        delete player;
+                        players.erase(players.begin() + cptPl);
+
+                        CheckPlayerAlive(players);
+                    }                  
+                    delete(balle);
+                    balles.erase(balles.begin() + cptT);
+                    break;
+                }      
+                cptT++;
+            }   
+            cptPl++;
+        }
+        
+
 
         for (Platforme* platforme : platformes)
         {
+            cptPl = 0;
             for (Player* player : players) //CHECK DES PLAYERS / SOL
             {
                 Collider playerCol = player->GetCollider();
@@ -406,6 +466,11 @@ int main()
             for (Caisse* caisse : caisses)
             {
                 caisse->Draw(window);
+            }
+
+            for (Balle* balle : balles)
+            {
+                balle->Draw(window);
             }
         }
        

@@ -46,6 +46,7 @@ public:
 	int GetMunition(std::string type);
 	int* GetTagEquipe() { return equipe->GetTagEquipe(); }
 	Equipe* GetEquipe() { return equipe; }
+	sf::Vector2f GetSize() { return body.getSize(); }
 
 private:
 	sf::RectangleShape body;

@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "Platforme.h"
 #include "Caisse.h"
-#include "Missile.h"
+#include "Projectile.h"
 
 class GUI
 {
