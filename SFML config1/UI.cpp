@@ -1,9 +1,10 @@
 #include "UI.h"
 
-Compteur::Compteur(sf::Font* font,sf::Vector2f position, int value, int fontSize, sf::Color color)
+Compteur::Compteur(sf::Font* font,sf::Vector2f position, int value, int maxValue,int minValue, int fontSize, sf::Color color)
 {
 	this->value = value;
-
+	this->maxValue = maxValue;
+	this->minValue = minValue;
 	
 	text.setPosition(position);
 	text.setFont(*font);
@@ -19,7 +20,7 @@ Compteur::~Compteur()
 
 void Compteur::SetValue(int value)
 {
-	this->value = value;
+	if(value <= maxValue && value >= minValue)this->value = value;
 	SetText();
 }
 
@@ -167,7 +168,7 @@ void MinusButton::Minus()
 }
 
 CaseInventaire::CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Font* font, sf::Vector2f size, sf::Vector2f position, std::string type) :
-	nbre(font,sf::Vector2f(size),0,32,sf::Color::Blue)
+	nbre(font,sf::Vector2f(size),0,99,0,32,sf::Color::Blue)
 {
 	this->back.setTexture(back);
 	this->image.setTexture(image);

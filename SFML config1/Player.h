@@ -29,7 +29,7 @@ private:
 class Player : public Rigidbody
 {
 public:
-	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, Equipe* equipe);
+	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f* spawnPoint ,float jumpHeight, int maxLife, Equipe* equipe);
 	~Player();
 
 

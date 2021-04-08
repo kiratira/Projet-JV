@@ -10,7 +10,7 @@ class UI
 class Compteur 
 {
 public:
-	Compteur(sf::Font* font, sf::Vector2f position, int value, int fontSize, sf::Color color);
+	Compteur(sf::Font* font, sf::Vector2f position, int value, int maxValue, int minValue, int fontSize, sf::Color color);
 	~Compteur();
 
 	void SetValue(int value);
@@ -28,6 +28,8 @@ private:
 private:
 	sf::Text text;
 	int value;
+	int maxValue;
+	int minValue;
 
 };
 

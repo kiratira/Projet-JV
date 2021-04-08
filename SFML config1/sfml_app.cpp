@@ -17,6 +17,8 @@ void ClearVector(std::vector<Platforme*> vect);
 void ClearVector(std::vector<Player*> vect);
 void ClearVector(std::vector<Missile*> vect);
 void ClearVector(std::vector<Caisse*> vect);
+void ClearVector(std::vector<CaseInventaire*> vect);
+void ClearVector(std::vector<Equipe*> vect);
 void SwapMainPlayer(Player* actual, Player* next);
 bool CheckPlayerAlive(std::vector<Player*> players);
 
@@ -28,13 +30,15 @@ int main()
     sf::View Inventaireview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(2048, 1080));
     AssetManager a_manager;
     //GUI ui_manager;
-    MapGenerator map;
+    //MapGenerator map;
     sf::Clock clockDeltaTime;
     sf::Clock clockTimer;
     sf::Clock PowerTimer;
     float deltaTime = 0.0f;
 
     std::vector<Player*> players;
+    std::vector<Equipe*> equipes;
+    std::vector<sf::Vector2f*> spawnPoints;
     std::vector<Platforme*> platformes;
     std::vector<Missile*> missiles;
     std::vector<Caisse*> caisses;
@@ -44,7 +48,8 @@ int main()
 
     Player* mainPlayer;
     unsigned int mainPlayernbre = 0;
-    bool canChange = true;
+    bool readyToPlay = false;
+    bool canChange = false;
 
     bool startParty = true;
     bool showInventaire = false;
@@ -53,33 +58,37 @@ int main()
 
     bool showMenu = true;
     bool showParametres = false;
-    bool showGame = true;
+    bool showGame = false;
+    bool showReady = true;
     bool pause = false;
 
     std::string selectedWeapon = "Bazooka";
+    float maxTime = 10;
+
+
+    
 
 #pragma region TestZONE
     
 
     //Test Generation player + Main player + Equipe
 
-    Equipe* equipe1 = new Equipe(1);
-    Equipe* equipe2 = new Equipe(2);
+   /* Equipe* equipe1 = new Equipe(1);
+    Equipe* equipe2 = new Equipe(2);*/
 
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 80.0f, 100, equipe1));
+    /*players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 80.0f, 100, equipe1));
     players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 80.0f, 100, equipe2));
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 80.0f, 100, equipe2));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 80.0f, 100, equipe2));*/
 
-
-    //MAIN PLAYER SELECTION
-    players[0]->SetMovement(true);
-    mainPlayer = players[mainPlayernbre];
 
 
     //Test Generation Map
+    MapGenerator::SPGen(&spawnPoints);
+    MapGenerator::MapGen(&platformes);
+    MapGenerator::PlayerGen(2, 1, &players, equipes, spawnPoints);
 
-    map.MapGen(platformes);
-
+    //MAIN PLAYER SELECTION
+    mainPlayer = players[mainPlayernbre];
 
     //caisse de munition
 
@@ -94,7 +103,7 @@ int main()
     */
     sf::Vector2f timerPosition = sf::Vector2f(window.getSize().x * 5 / 100, window.getSize().y * 90 / 100);
 
-    Compteur* testCompteur = new Compteur(&AssetManager::GetFont("Stupid Meeting_D.otf"), timerPosition , 0,32,sf::Color::Blue);
+    
     Image* testImage = new Image(&AssetManager::GetTexture("CadreUI.png"), timerPosition, sf::Vector2f(60, 60));
 
     std::vector<bool*> inventaireBool;
@@ -112,26 +121,44 @@ int main()
     for (std::map<std::string, int>::iterator it = inventaire.begin(); it !=inventaire.end(); it++)
     {
         std::cout << it->first << std::endl;
-        casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first +".png"), &AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase,0)*cptCI,it->first));
+        casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first +".png"), 
+            &AssetManager::GetFont("Stupid Meeting_D.otf"), sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase,0)*cptCI,it->first));
         casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
         cptCI++;
     }
     
 
 
-    sf::RectangleShape viseur;
-    viseur.setSize(sf::Vector2f(96, 32));
-    viseur.setOrigin(sf::Vector2f(0, mainPlayer->GetSize().y / 2));
 
 #pragma endregion
+    Compteur* timer = new Compteur(&AssetManager::GetFont("Stupid Meeting_D.otf"), timerPosition, 0, maxTime,0, 32, sf::Color::Blue);
+    Label* labelReady = new Label(&AssetManager::GetFont("Stupid Meeting_D.otf"),sf::Vector2f(window.getSize().x /3, window.getSize().y / 2), "Appuyer sur \"Enter\" pour jouer", 64, sf::Color::White);
 
+    sf::RectangleShape* viseur = new sf::RectangleShape();
+    viseur->setSize(sf::Vector2f(96, 32));
+    viseur->setOrigin(sf::Vector2f(0, mainPlayer->GetSize().y / 2));
 
     while (window.isOpen())
     {
 
         deltaTime = clockDeltaTime.restart().asSeconds();
 
-        testCompteur->SetValue(20 - clockTimer.getElapsedTime().asSeconds());
+        timer->SetValue(maxTime - clockTimer.getElapsedTime().asSeconds());
+        if (timer->GetValue() <= 0 && readyToPlay && canChange)
+        {
+            //Swap Player
+            mainPlayernbre++;
+            if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+            SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+            mainPlayer = players[mainPlayernbre];
+            clockTimer.restart().asSeconds();
+            readyToPlay = false;
+            showReady = true;
+            canChange = false;
+            showViseur = false;
+            viseur->setRotation(0);
+        }
+
 
         if (deltaTime > 1.0f / 20.0f) deltaTime = 1.0f / 20.0f; //bug de la fen�tre
 
@@ -147,20 +174,20 @@ int main()
             case sf::Event::EventType::KeyPressed:
                 switch (event.key.code)
                 {
-                case sf::Keyboard::T: //SWAP Player test
-                    canChange = false;
-                    mainPlayernbre++;
-                    if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                    SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                    mainPlayer = players[mainPlayernbre];
+                case sf::Keyboard::Enter: //SWAP Player test
+                    readyToPlay = true;
+                    showReady = false;
+                    canChange = true;
+                    mainPlayer->SetMovement(true);
+                    clockTimer.restart().asSeconds();
                     break;
                 case sf::Keyboard::Up:
-                    if(viseur.getRotation() <= 90 || viseur.getRotation() >= 270)viseur.rotate(600 * -deltaTime);
-                    else viseur.setRotation(272);
+                    if(viseur->getRotation() <= 90 || viseur->getRotation() >= 270)viseur->rotate(600 * -deltaTime);
+                    else viseur->setRotation(272);
                     break;
                 case sf::Keyboard::Down:
-                    if (viseur.getRotation() <= 90 || viseur.getRotation() >= 270)viseur.rotate(600 * deltaTime);
-                    else viseur.setRotation(89);
+                    if (viseur->getRotation() <= 90 || viseur->getRotation() >= 270)viseur->rotate(600 * deltaTime);
+                    else viseur->setRotation(89);
                     break;
                 case sf::Keyboard::F:
                     if (showViseur)
@@ -176,9 +203,6 @@ int main()
             case sf::Event::EventType::KeyReleased:
                 switch (event.key.code)
                 {
-                case sf::Keyboard::T:
-                    canChange = true;
-                    break;
                 case sf::Keyboard::F:
                     if (showViseur)
                     {
@@ -186,7 +210,7 @@ int main()
                         if (selectedWeapon == "Bazooka") //modifier pour prendre l'arme
                         {
                             mainPlayer->Shoot("Bazooka");
-                            float theta = viseur.getRotation() * 3.1416 / 180;
+                            float theta = viseur->getRotation() * 3.1416 / 180;
                             sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
                             float power = PowerTimer.getElapsedTime().asMilliseconds();
                             if (!mainPlayer->IsFaceRight()) angle = -angle;                      
@@ -196,7 +220,7 @@ int main()
                         {
                             mainPlayer->Shoot("Awp");
                             sf::Vector2f position;
-                            float theta = viseur.getRotation() * 3.1416 / 180;
+                            float theta = viseur->getRotation() * 3.1416 / 180;
                             sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
                             if (mainPlayer->IsFaceRight())position = mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x + 2, 0);
                             else
@@ -207,7 +231,7 @@ int main()
                             balles.push_back(new Balle(position, angle));
                         }
                         showViseur = false;
-                        viseur.setRotation(0);
+                        viseur->setRotation(0);
                     }
                 }
                 break;
@@ -237,10 +261,10 @@ int main()
                         {
                             selectedWeapon = *CI->GetType();
                             showInventaire = false;
-                            viseur.setTexture(&AssetManager::GetTexture(*CI->GetType() + ".png"));
-                            if (mainPlayer->IsFaceRight())viseur.setScale(sf::Vector2f(1, 1));       
-                            else viseur.setScale(sf::Vector2f(-1, 1));
-                            viseur.setPosition(mainPlayer->GetPosition());
+                            viseur->setTexture(&AssetManager::GetTexture(*CI->GetType() + ".png"));
+                            if (mainPlayer->IsFaceRight())viseur->setScale(sf::Vector2f(1, 1));
+                            else viseur->setScale(sf::Vector2f(-1, 1));
+                            viseur->setPosition(mainPlayer->GetPosition());
                             showViseur = true;
                         }
                     }
@@ -254,17 +278,14 @@ int main()
                     testButton->checkClicked(sf::Mouse::getPosition(window), false);
                     break;
                 }
-                break;
-                
+                break;              
             }
-            
-
         }
     
         if (showGame) 
         {
 
-#pragma region Update des entit�es
+#pragma region Update des entitees
 
             for (Player* player : players)
             {
@@ -317,6 +338,18 @@ int main()
 
                             CheckPlayerAlive(players);
                         }
+
+                        //Swap player
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
+
                         delete(balle);
                         balles.erase(balles.begin() + cptT);
                         break;
@@ -366,6 +399,17 @@ int main()
 
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
+
+                        //Swap player
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
                     }
                     cptM++;
                 }
@@ -497,7 +541,7 @@ int main()
         {
             window.setView(view);
 
-            if (showViseur) window.draw(viseur);
+            if (showViseur) window.draw(*viseur);
             for (Player* player : players)
             {
                 player->Draw(window);
@@ -526,7 +570,7 @@ int main()
             window.setView(Uiview);
 
             testImage->Draw(window);
-            testCompteur->Draw(window);
+            timer->Draw(window);
             testButton->Draw(window);
 
             if (showInventaire) {
@@ -537,6 +581,7 @@ int main()
                     CI->Draw(window);
                 }
             }
+            if (showReady)labelReady->Draw(window);
         }
          
         window.display();
@@ -554,7 +599,7 @@ int main()
 
     delete(testButton);
     delete(testImage);
-    delete(testCompteur);
+    delete(timer);
     //delete(testInventaire);
 
     return 0;
@@ -597,10 +642,27 @@ void ClearVector(std::vector<Caisse*> vect)
     vect.clear();
 }
 
+void ClearVector(std::vector<Equipe*> vect)
+{
+    for (Equipe* element : vect)
+    {
+        delete element;
+    }
+    vect.clear();
+}
+
+void ClearVector(std::vector<CaseInventaire*> vect)
+{
+    for (CaseInventaire* element : vect)
+    {
+        delete element;
+    }
+    vect.clear();
+}
+
 void SwapMainPlayer(Player* actual, Player* next)
 {
-    actual->SetMovement(false);
-    next->SetMovement(true);  
+    actual->SetMovement(false); 
 }
 
 bool CheckPlayerAlive(std::vector<Player*> players) {
