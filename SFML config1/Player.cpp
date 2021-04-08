@@ -114,9 +114,10 @@ int Player::GetMunition(std::string type)
 	return equipe->GetInventaire()->GetMunition(type);
 }
 
-Equipe::Equipe(int tagEquipe)
+Equipe::Equipe(int tagEquipe, sf::Color* color)
 {
 	this->tagEquipe = tagEquipe;
+	this->color = color;
 }
 
 Equipe::~Equipe()

@@ -10,16 +10,18 @@
 class Equipe
 {
 public:
-	Equipe(int tagEquipe);
+	Equipe(int tagEquipe,sf::Color* color);
 	~Equipe();
 
 
 	inventory* GetInventaire() { return &inventaire; }
 	int* GetTagEquipe() { return &tagEquipe; }
 	std::string* GetNom() { return &nom; }
+	sf::Color* GetColor() { return color; }
 
 private:
 	inventory inventaire;
+	sf::Color* color;
 	int tagEquipe;
 	std::string nom;
 };

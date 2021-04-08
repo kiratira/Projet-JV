@@ -4,6 +4,7 @@
 
 MapGenerator::MapGenerator()
 {
+    
 }
 
 MapGenerator::~MapGenerator()
@@ -28,13 +29,21 @@ void MapGenerator::MapGen(std::vector<Platforme*>* platformes)
             platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
         }
     }
+
+    platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(2, 2), sf::Vector2f(2000, 2000), 1)); // Pixel Of The Dead
 }
 
 void MapGenerator::PlayerGen(int nbreEquipes, int nbrePersonnages, std::vector<Player*>* players, std::vector<Equipe*>& equipes, std::vector<sf::Vector2f*>& spawnPoints)
 {
+    std::vector<sf::Color> colors;
+    colors.push_back(sf::Color::Blue);
+    colors.push_back(sf::Color::Red);
+    colors.push_back(sf::Color::Green);
+    colors.push_back(sf::Color::Yellow);
+
     for (int i = 0; i < nbreEquipes; i++)
-    {
-        equipes.push_back(new Equipe(i + 1));
+    {  
+        equipes.push_back(new Equipe(i + 1,&colors[i]));
     }
 
     for (int i = 0; i < nbrePersonnages; i++)

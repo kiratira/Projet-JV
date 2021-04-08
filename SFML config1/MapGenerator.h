@@ -16,5 +16,6 @@ public:
 	static void PlayerGen(int nbreEquipes, int nbrePersonnages,std::vector<Player*>* players, std::vector<Equipe*>& equipes, std::vector<sf::Vector2f*>& spawnPoints);
 	static void SPGen(std::vector<sf::Vector2f*>* spawnPoints);
 
+
 };
 
