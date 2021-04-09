@@ -12,6 +12,7 @@ public:
 	~MapGenerator();
 
 	static void MapGen(std::vector<Platforme*> &platformes);
+	static void MapRand(std::vector<Platforme*> &plateformes);
 	static MapGenerator* Instance() { return sInstance; }
 
 private:

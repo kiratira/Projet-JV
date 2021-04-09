@@ -22,10 +22,10 @@ bool CheckPlayerAlive(std::vector<Player*> players);
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(2048, 1080), "SFML works!");
-    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(2048, 1080));
-    sf::View Uiview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(2048, 1080));
-    sf::View Inventaireview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(2048, 1080));
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!");
+    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(1280, 720));
+    sf::View Uiview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(1280, 720));
+    sf::View Inventaireview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(1280, 720));
     AssetManager a_manager;
     //GUI ui_manager;
     MapGenerator map;
@@ -66,9 +66,9 @@ int main()
     Equipe* equipe1 = new Equipe(1);
     Equipe* equipe2 = new Equipe(2);
 
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 80.0f, 100, equipe1));
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 80.0f, 100, equipe2));
-    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 80.0f, 100, equipe2));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(50, -100), 80.0f, 100, equipe1));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(40, -100), 80.0f, 100, equipe2));
+    players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(45, -100), 80.0f, 100, equipe2));
 
 
     //MAIN PLAYER SELECTION
@@ -78,7 +78,7 @@ int main()
 
     //Test Generation Map
 
-    map.MapGen(platformes);
+    map.MapRand(platformes);
 
 
     //caisse de munition
@@ -264,7 +264,7 @@ int main()
         if (showGame) 
         {
 
-#pragma region Update des entit�es
+#pragma region Update des entites
 
             for (Player* player : players)
             {
