@@ -4,7 +4,7 @@
 #include "AssetManager.h"
 
 #define largeurMap 300
-#define block 4
+#define block 4.0f
 
 //MapGenerator* MapGenerator::sInstance = nullptr;
 
@@ -20,25 +20,25 @@ MapGenerator::~MapGenerator()
 void MapGenerator::MapGen(std::vector<Platforme*>* platformes)
 {
 
-    for (int y = 200; y < 404; y += 8)
+    for (float y = 200.0; y < 404.0; y += 8)
     {
-        for (int x = 0; x < 400; x += 8)
+        for (float x = 0.0; x < 400.0; x += 8)
         {
             platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
         }
     }
 
-    for (int y = 200; y < 404; y += 8)
+    for (float y = 200.0; y < 404.0; y += 8.0)
     {
-        for (int x = 0; x < 400; x += 8)
+        for (float x = 0.0; x < 400.0; x += 8.0)
         {
             platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(8, 8), sf::Vector2f(x, y), 1));
         }
     }
 
-    for (int y = 200; y < 304; y += 16)
+    for (float y = 200.0; y < 304.0; y += 16.0)
     {
-        for (int x = 440; x < 640; x += 16)
+        for (float x = 440.0; x < 640.0; x += 16.0)
         {
             platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(16, 16), sf::Vector2f(x, y), 1));
         }
@@ -57,7 +57,7 @@ void MapGenerator::MapRand(std::vector<Platforme*>* platformes)
     //remplissage du tableau avec les hauteur de map
     for (int i = 0; i < 3000; i++) {
 
-        int number = distribution(gen);
+        int number = int(distribution(gen));
         ++list[number % largeurMap];
 
     }

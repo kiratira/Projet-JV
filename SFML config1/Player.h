@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <tgmath.h>
+#include <ctgmath>
 #include "Animation.h"
 #include "Collider.h"
 #include "inventory.h"

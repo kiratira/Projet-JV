@@ -34,6 +34,7 @@ bool inventory::UseMunition(std::string type)
 		}
 	}
 	else std::cout << "PAS TROUVE CE TYPE" << std::endl;
+	return false;
 }
 
 int inventory::GetMunition(std::string type)
