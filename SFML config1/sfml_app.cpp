@@ -104,7 +104,6 @@ int main()
    // //MAIN PLAYER SELECTION
    // 
 
-    map.MapRand(platformes);
    // //caisse de munition
 
    // caisses.push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(270, 0), "Bazooka", 3));
@@ -190,7 +189,7 @@ int main()
                 ClearVector(&buttons);
                 MapGenerator::SPGen(&spawnPoints);
                 MapGenerator::PlayerGen(compteurs[0]->GetValue(), compteurs[1]->GetValue(), &players, equipes, spawnPoints);
-                MapGenerator::MapGen(&platformes);
+                MapGenerator::MapRand(&platformes);
                 ClearVector(&compteurs);
                 mainPlayer = players[mainPlayernbre];
 
