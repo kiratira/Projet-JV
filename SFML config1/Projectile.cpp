@@ -11,7 +11,7 @@ Missile::Missile(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoin
 
 	body.setSize(size);
 	body.setTexture(texture);
-	body.setOrigin(size * 0.5f);
+	//body.setOrigin(size);
 	body.setPosition(spawnPoint);
 	body.setRotation(90);
 

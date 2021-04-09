@@ -10,16 +10,18 @@
 class Equipe
 {
 public:
-	Equipe(int tagEquipe);
+	Equipe(int tagEquipe,sf::Color* color);
 	~Equipe();
 
 
 	inventory* GetInventaire() { return &inventaire; }
 	int* GetTagEquipe() { return &tagEquipe; }
 	std::string* GetNom() { return &nom; }
+	sf::Color* GetColor() { return color; }
 
 private:
 	inventory inventaire;
+	sf::Color* color;
 	int tagEquipe;
 	std::string nom;
 };
@@ -29,7 +31,7 @@ private:
 class Player : public Rigidbody
 {
 public:
-	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f spawnPoint ,float jumpHeight, int maxLife, Equipe* equipe);
+	Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size, sf::Vector2f* spawnPoint ,float jumpHeight, int maxLife, Equipe* equipe);
 	~Player();
 
 

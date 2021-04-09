@@ -1,12 +1,14 @@
 #include "UI.h"
+#include "AssetManager.h"
 
-Compteur::Compteur(sf::Font* font,sf::Vector2f position, int value, int fontSize, sf::Color color)
+Compteur::Compteur(sf::Vector2f position, int value, int maxValue,int minValue, int fontSize, sf::Color color)
 {
 	this->value = value;
-
+	this->maxValue = maxValue;
+	this->minValue = minValue;
 	
 	text.setPosition(position);
-	text.setFont(*font);
+	text.setFont(AssetManager::GetFont("Stupid Meeting_D.otf"));
 	text.setString(std::to_string(value));
 	text.setCharacterSize(fontSize);
 	text.setFillColor(color);
@@ -19,15 +21,15 @@ Compteur::~Compteur()
 
 void Compteur::SetValue(int value)
 {
-	this->value = value;
+	if(value <= maxValue && value >= minValue)this->value = value;
 	SetText();
 }
 
 
-Label::Label(sf::Font* font, sf::Vector2f position, std::string content, int fontSize, sf::Color color)
+Label::Label(sf::Vector2f position, std::string content, int fontSize, sf::Color color)
 {
 	text.setPosition(position);
-	text.setFont(*font);
+	text.setFont(AssetManager::GetFont("Stupid Meeting_D.otf"));
 	text.setString(content);
 	text.setCharacterSize(fontSize);
 	text.setFillColor(color);
@@ -61,7 +63,6 @@ Button::Button(sf::Texture* normal, sf::Texture* clicked, sf::Vector2f size, sf:
 
 	this->normal.setSize(size);
 	this->clicked.setSize(size);
-
 	this->normal.setPosition(position);
 	this->clicked.setPosition(position);
 
@@ -69,7 +70,7 @@ Button::Button(sf::Texture* normal, sf::Texture* clicked, sf::Vector2f size, sf:
 
 }
 
-Button::Button(sf::Texture* normal, sf::Texture* clicked, sf::Font* font, std::string content,int fontSize, sf::Vector2f size, sf::Vector2f position, int type)
+Button::Button(sf::Texture* normal, sf::Texture* clicked, std::string content,int fontSize, sf::Vector2f size, sf::Vector2f position, int type)
 {
 	this->type = type;
 	
@@ -82,7 +83,7 @@ Button::Button(sf::Texture* normal, sf::Texture* clicked, sf::Font* font, std::s
 
 	text.setPosition(position);
 	text.setOrigin(-size * 0.25f);
-	text.setFont(*font);
+	text.setFont(AssetManager::GetFont("Stupid Meeting_D.otf"));
 	text.setString(content);
 	text.setCharacterSize(fontSize);
 
@@ -131,7 +132,7 @@ void Button::Swap()
 }
 
 
-AddButton::AddButton(sf::Texture* normal, sf::Texture* clicked, std::string content, sf::Vector2f size, sf::Vector2f position, Compteur* compteur) :
+AddButton::AddButton(sf::Texture* normal, sf::Texture* clicked, sf::Vector2f size, sf::Vector2f position, Compteur* compteur) :
 	Button(normal, clicked,size, position, 1)
 {
 	this->compteur = compteur;
@@ -147,7 +148,7 @@ void AddButton::Add()
 	compteur->SetValue(compteur->GetValue() + 1);
 }
 
-MinusButton::MinusButton(sf::Texture* normal, sf::Texture* clicked, std::string content, sf::Vector2f size, sf::Vector2f position, Compteur* compteur) :
+MinusButton::MinusButton(sf::Texture* normal, sf::Texture* clicked, sf::Vector2f size, sf::Vector2f position, Compteur* compteur) :
 	Button(normal, clicked, size, position, -1)
 {
 	this->compteur = compteur;
@@ -162,12 +163,10 @@ void MinusButton::Minus()
 {
 	if (compteur->GetValue() - 1 < 0)compteur->SetValue(0);
 	else compteur->SetValue(compteur->GetValue() - 1);
-
-
 }
 
-CaseInventaire::CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Font* font, sf::Vector2f size, sf::Vector2f position, std::string type) :
-	nbre(font,sf::Vector2f(size),0,32,sf::Color::Blue)
+CaseInventaire::CaseInventaire(sf::Texture* back, sf::Texture* image, sf::Vector2f size, sf::Vector2f position, std::string type) :
+	nbre(sf::Vector2f(size),0,99,0,32,sf::Color::Blue)
 {
 	this->back.setTexture(back);
 	this->image.setTexture(image);
@@ -203,8 +202,8 @@ bool CaseInventaire::checkClicked(sf::Vector2i mousePos)
 	return false;
 }
 
-BoolButton::BoolButton(sf::Texture* normal, sf::Texture* clicked, sf::Font* font,std::string content, int fontSize, sf::Vector2f size, sf::Vector2f position, std::vector<bool*> vect) :
-	Button(normal, clicked, font, content, fontSize, size, position, 2)
+BoolButton::BoolButton(sf::Texture* normal, sf::Texture* clicked,std::string content, int fontSize, sf::Vector2f size, sf::Vector2f position, std::vector<bool*> vect) :
+	Button(normal, clicked, content, fontSize, size, position, 2)
 {
 	this->vect = vect;
 }

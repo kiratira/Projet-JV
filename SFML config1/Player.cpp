@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f spawnPoint, float jumpHeight, int maxLife, Equipe* equipe) :
+Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f* spawnPoint, float jumpHeight, int maxLife, Equipe* equipe) :
 	animation(texture, imageCount, switchTime), Rigidbody(&body)
 {
 	this->speed = speed;
@@ -14,7 +14,7 @@ Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, 
 	faceRight = true;
 
 	body.setSize(size);
-	body.setPosition(spawnPoint);
+	body.setPosition(*spawnPoint);
 	body.setOrigin(size * 0.5f);
 	body.setTexture(texture);
 }
@@ -114,9 +114,10 @@ int Player::GetMunition(std::string type)
 	return equipe->GetInventaire()->GetMunition(type);
 }
 
-Equipe::Equipe(int tagEquipe)
+Equipe::Equipe(int tagEquipe, sf::Color* color)
 {
 	this->tagEquipe = tagEquipe;
+	this->color = color;
 }
 
 Equipe::~Equipe()
