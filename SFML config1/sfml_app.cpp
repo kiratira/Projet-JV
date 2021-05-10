@@ -12,18 +12,9 @@
 
 #define VectZero sf::Vector2f(0,0)
 
+template <class T>
+void ClearVector(std::vector<T*>* vect);
 
-void ClearVector(std::vector<Platforme*>* vect);
-void ClearVector(std::vector<Player*>* vect);
-void ClearVector(std::vector<Missile*>* vect);
-void ClearVector(std::vector<Caisse*>* vect);
-void ClearVector(std::vector<CaseInventaire*>* vect);
-void ClearVector(std::vector<Equipe*>* vect);
-void ClearVector(std::vector<Button*>* vect);
-void ClearVector(std::vector<Compteur*>* vect);
-void ClearVector(std::vector<Image*>* vect);
-void ClearVector(std::vector<Label*>* vect);
-void ClearVector(std::vector<sf::Vector2f*>* vect);
 void SwapMainPlayer(Player* actual, Player* next);
 bool CheckPlayerAlive(std::vector<Player*> players, bool* game, bool* over,std::string* winner);
 
@@ -823,100 +814,10 @@ int main()
     return 0;
 }
 
-
-void ClearVector(std::vector<Platforme*>* vect)
+template<class T>
+void ClearVector(std::vector<T*>* vect)
 {
-    for (Platforme* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<sf::Vector2f*>* vect)
-{
-    for (sf::Vector2f* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Button*>* vect)
-{
-    for (Button* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Player*>* vect)
-{
-    for (Player* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Missile*>* vect)
-{
-    for (Missile* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Caisse*>* vect)
-{
-    for (Caisse* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Compteur*>* vect)
-{
-    for (Compteur* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Equipe*>* vect)
-{
-    for (Equipe* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<CaseInventaire*>* vect)
-{
-    for (CaseInventaire* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Label*>* vect)
-{
-    for (Label* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Image*>* vect)
-{
-    for (Image* element : *vect)
+    for (T* element : *vect)
     {
         delete element;
     }
