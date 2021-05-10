@@ -186,7 +186,7 @@ int main()
             {
                 //Generation Entitees
                 ClearVector(&buttons);
-                MapGenerator::SPGen(&spawnPoints);
+                MapGenerator::SPGen(compteurs[0]->GetValue(), compteurs[1]->GetValue() ,&spawnPoints);
                 MapGenerator::PlayerGen(compteurs[0]->GetValue(), compteurs[1]->GetValue(), &players, equipes, spawnPoints);
                 MapGenerator::MapRand(&platformes);
                 ClearVector(&compteurs);
