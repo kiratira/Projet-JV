@@ -123,7 +123,7 @@ void MapGenerator::PlayerGen(int nbreEquipes, int nbrePersonnages, std::vector<P
         for (int x = 0; x < nbreEquipes; x++)
         {
             int a = rand() % spawnPoints.size();
-            players->push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 100.0f, sf::Vector2f(32, 32), spawnPoints[a], 100.0f, 100, equipes[x]));
+            players->push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 50.0f, sf::Vector2f(32, 32), spawnPoints[a], 100.0f, 100, equipes[x]));
             delete(spawnPoints[a]);
             spawnPoints.erase(spawnPoints.begin() + a);
         }

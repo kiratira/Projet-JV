@@ -18,6 +18,9 @@ public:
 	int* GetTagEquipe() { return &tagEquipe; }
 	std::string* GetNom() { return &nom; }
 	sf::Color* GetColor() { return color; }
+	bool operator==(Equipe const&);
+	bool operator!=(Equipe const&);
+
 
 private:
 	inventory inventaire;

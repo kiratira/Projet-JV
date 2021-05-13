@@ -129,3 +129,16 @@ Equipe::Equipe(int tagEquipe, sf::Color* color)
 Equipe::~Equipe()
 {
 }
+
+bool Equipe::operator==(Equipe const& source)
+{
+	if (tagEquipe == source.tagEquipe) return true;
+	return false;
+}
+
+bool Equipe::operator!=(Equipe const& source)
+{
+	if (tagEquipe != source.tagEquipe) return true;
+	return false;
+}
+

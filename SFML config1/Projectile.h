@@ -48,7 +48,7 @@ private:
 	sf::RectangleShape body;
 	sf::Vector2f velocity;
 	sf::Vector2f angle;
-	float power = 8000;
+	float power = 3000;
 	int damage = 35;
 };
 

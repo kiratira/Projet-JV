@@ -327,18 +327,21 @@ int main()
                     switch (event.key.code)
                     {
                     case sf::Keyboard::Enter: //SWAP Player test
-                        readyToPlay = true;
-                        showReady = false;
-                        canChange = true;
-                        mainPlayer->SetMovement(true);
-                        clockTimer.restart().asSeconds();
+                        if (!readyToPlay)
+                        {
+                            readyToPlay = true;
+                            showReady = false;
+                            canChange = true;
+                            mainPlayer->SetMovement(true);
+                            clockTimer.restart().asSeconds();
+                        }
                         break;
                     case sf::Keyboard::Up:
-                        if (viseur->getRotation() <= 90 || viseur->getRotation() >= 270)viseur->rotate(600 * -deltaTime);
+                        if (viseur->getRotation() <= 90 || viseur->getRotation() >= 270)viseur->rotate(200 * -deltaTime);
                         else viseur->setRotation(272);
                         break;
                     case sf::Keyboard::Down:
-                        if (viseur->getRotation() <= 90 || viseur->getRotation() >= 270)viseur->rotate(600 * deltaTime);
+                        if (viseur->getRotation() <= 90 || viseur->getRotation() >= 270)viseur->rotate(200 * deltaTime);
                         else viseur->setRotation(89);
                         break;
                     case sf::Keyboard::F:
@@ -488,23 +491,24 @@ int main()
                             delete player;
                             players.erase(players.begin() + cptPl);
 
-                            if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
-                            {
-                                //Swap player
-                                mainPlayernbre++;
-                                if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                                SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                                mainPlayer = players[mainPlayernbre];
-                                readyToPlay = false;
-                                showReady = true;
-                                canChange = false;
-                                showViseur = false;
-                                viseur->setRotation(0);
-                            }
+                            CheckPlayerAlive(players, &showGame, &showGameOver, &winner);
+                            
                         }
 
                         delete(balle);
                         balles.erase(balles.begin() + cptT);
+
+                        //Swap player
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
+
                         break;
                     }
                     cptT++;
@@ -545,19 +549,8 @@ int main()
                                     delete player;
                                     players.erase(players.begin() + cptPl);
 
-                                    if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
-                                    {
-                                        //Swap player
-                                        mainPlayernbre++;
-                                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                                        mainPlayer = players[mainPlayernbre];
-                                        readyToPlay = false;
-                                        showReady = true;
-                                        canChange = false;
-                                        showViseur = false;
-                                        viseur->setRotation(0);
-                                    }
+                                    CheckPlayerAlive(players, &showGame, &showGameOver, &winner);
+
                                 }
                             cptPl++;
                         }
@@ -565,6 +558,17 @@ int main()
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
 
+                        //Swap player
+                        std::cout << "BOOM" << std::endl;
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
                         
                     }
                     cptM++;
@@ -627,31 +631,33 @@ int main()
                         for (Player* player : players)
                         {
                             if (player->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
+                            {
                                 if (player->TakeDamage(missile->GetDamage()))
                                 {
                                     delete player;
                                     players.erase(players.begin() + cptPl);
 
-                                    if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
-                                    {
-                                        //Swap Player
-                                        mainPlayernbre++;
-                                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                                        mainPlayer = players[mainPlayernbre];
-                                        clockTimer.restart().asSeconds();
-                                        readyToPlay = false;
-                                        showReady = true;
-                                        canChange = false;
-                                        showViseur = false;
-                                        viseur->setRotation(0);
-                                    }
-                                }
+                                    CheckPlayerAlive(players, &showGame, &showGameOver, &winner);                            
+                                    
+                                }                      
+                            }
                             cptPl++;
                         }
 
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
+
+                        //Swap Player
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        clockTimer.restart().asSeconds();
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
           
                     }
                     cptM++;
@@ -848,7 +854,7 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
 
     for (unsigned int i = 0; i < players.size() - 1; i++)
     {
-        if (*players[i]->GetEquipe()->GetTagEquipe() != *players[i + 1]->GetEquipe()->GetTagEquipe()) {
+        if (*players[i]->GetEquipe() != *players[i + 1]->GetEquipe()) {
             break;
         }
         
