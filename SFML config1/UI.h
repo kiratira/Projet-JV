@@ -7,7 +7,7 @@ class UI
 
 };
 
-class Compteur 
+class Compteur
 {
 public:
 	Compteur(sf::Vector2f position, int value, int maxValue, int minValue, int fontSize, sf::Color color);

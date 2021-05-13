@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "AssetManager.h"
 
 Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, sf::Vector2f size,sf::Vector2f* spawnPoint, float jumpHeight, int maxLife, Equipe* equipe) :
 	animation(texture, imageCount, switchTime), Rigidbody(&body)
@@ -17,6 +18,9 @@ Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, 
 	body.setPosition(*spawnPoint);
 	body.setOrigin(size * 0.5f);
 	body.setTexture(texture);
+	cpLife.setPosition(sf::Vector2f(spawnPoint->x, spawnPoint->y - size.y - 20));
+	cpLife.setFont(AssetManager::GetFont("Stupid Meeting_D.otf"));
+	cpLife.setFillColor(*equipe->GetColor());
 }
 
 Player::~Player()
@@ -64,6 +68,8 @@ void Player::Update(float deltaTime)
 	animation.Update(row, deltaTime, faceRight);
 	body.setTextureRect(animation.uvRect);
 	body.move(velocity * deltaTime);
+	cpLife.setString(std::to_string(life));
+	cpLife.setPosition(sf::Vector2f(body.getPosition().x - 12, body.getPosition().y - body.getSize().y - 20));
 
 }
 

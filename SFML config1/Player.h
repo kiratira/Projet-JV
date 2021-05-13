@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <tgmath.h>
+#include <ctgmath>
 #include "Animation.h"
 #include "Collider.h"
 #include "inventory.h"
@@ -24,6 +24,7 @@ private:
 	sf::Color* color;
 	int tagEquipe;
 	std::string nom;
+	
 };
 
 
@@ -36,7 +37,7 @@ public:
 
 
 	void Update(float deltaTime);
-	void Draw(sf::RenderWindow& window) { window.draw(body); };
+	void Draw(sf::RenderWindow& window) { window.draw(body); window.draw(cpLife); };
 	void Oncollision(sf::Vector2f direction);
 
 	void SetMovement(bool state) { canMove = state; };
@@ -55,6 +56,7 @@ public:
 private:
 	sf::RectangleShape body;
 	Animation animation;
+	sf::Text cpLife;
 	unsigned int row;
 	float speed;
 	bool faceRight;

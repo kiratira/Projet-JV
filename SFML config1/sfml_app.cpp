@@ -12,18 +12,9 @@
 
 #define VectZero sf::Vector2f(0,0)
 
+template <class T>
+void ClearVector(std::vector<T*>* vect);
 
-void ClearVector(std::vector<Platforme*>* vect);
-void ClearVector(std::vector<Player*>* vect);
-void ClearVector(std::vector<Missile*>* vect);
-void ClearVector(std::vector<Caisse*>* vect);
-void ClearVector(std::vector<CaseInventaire*>* vect);
-void ClearVector(std::vector<Equipe*>* vect);
-void ClearVector(std::vector<Button*>* vect);
-void ClearVector(std::vector<Compteur*>* vect);
-void ClearVector(std::vector<Image*>* vect);
-void ClearVector(std::vector<Label*>* vect);
-void ClearVector(std::vector<sf::Vector2f*>* vect);
 void SwapMainPlayer(Player* actual, Player* next);
 bool CheckPlayerAlive(std::vector<Player*> players, bool* game, bool* over,std::string* winner);
 
@@ -31,11 +22,10 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!");
     sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(1280, 720));
-    sf::View Uiview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(1280, 720));
-    sf::View Inventaireview(sf::Vector2f(window.getSize().x /2, window.getSize().y /2), sf::Vector2f(1280, 720));
+    sf::View Uiview(sf::Vector2f(window.getSize().x /2.0f, window.getSize().y /2.0f), sf::Vector2f(1280, 720));
+    sf::View Inventaireview(sf::Vector2f(window.getSize().x /2.0f, window.getSize().y /2.0f), sf::Vector2f(1280, 720));
     AssetManager a_manager;
     //GUI ui_manager;
-    //MapGenerator map;
     sf::Clock clockDeltaTime;
     sf::Clock clockTimer;
     sf::Clock PowerTimer;
@@ -104,7 +94,6 @@ int main()
    // //MAIN PLAYER SELECTION
    // 
 
-    map.MapRand(platformes);
    // //caisse de munition
 
    // caisses.push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(270, 0), "Bazooka", 3));
@@ -158,7 +147,7 @@ int main()
                 if (!labels.empty()) ClearVector(&labels);
                 if (!buttons.empty()) ClearVector(&buttons);
                 buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Lancer partie", 32, sf::Vector2f(300, 70),
-                    sf::Vector2f(window.getSize().x / 2.5, (window.getSize().y / 2) - 10), goToParametes));
+                    sf::Vector2f(window.getSize().x / 2.5f, (window.getSize().y / 2.0f) - 10.0f), goToParametes));
                 canGen = false;
             }
 
@@ -167,19 +156,19 @@ int main()
             {
                 ClearVector(&buttons); //clear de tous les boutons du menu
                 sf::Vector2f* sizeButton = new sf::Vector2f(64, 64);
-                compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2 - 100, window.getSize().y / 3), 2, 4, 2, 32, sf::Color::Blue)); // Equipe
-                compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2 - 100, window.getSize().y / 2), 1, 4, 1, 32, sf::Color::Blue)); // Personnages
+                compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2.0f - 100.0f, window.getSize().y / 3.0f), 2, 4, 2, 32, sf::Color::Blue)); // Equipe
+                compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2.0f - 100.0f, window.getSize().y / 2.0f), 1, 4, 1, 32, sf::Color::Blue)); // Personnages
                 buttons.push_back(new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 2, window.getSize().y / 3), compteurs[0])); //add Equipe
+                    *sizeButton, sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 3.0f), compteurs[0])); //add Equipe
                 buttons.push_back(new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 2, window.getSize().y / 2), compteurs[1])); //add Personnages
+                    *sizeButton, sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), compteurs[1])); //add Personnages
                 buttons.push_back(new MinusButton(&AssetManager::GetTexture("ButtonNormalCompteurInverse.png"), &AssetManager::GetTexture("ButtonClickedCompteurInverse.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 3, window.getSize().y / 3), compteurs[0])); //minus Equipe
+                    *sizeButton, sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 3.0f), compteurs[0])); //minus Equipe
                 buttons.push_back(new MinusButton(&AssetManager::GetTexture("ButtonNormalCompteurInverse.png"), &AssetManager::GetTexture("ButtonClickedCompteurInverse.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 3, window.getSize().y / 2), compteurs[1])); //minus Personnages
+                    *sizeButton, sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), compteurs[1])); //minus Personnages
 
                 buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Start", 32, sf::Vector2f(130, 80),
-                    sf::Vector2f(window.getSize().x / 2.5, (window.getSize().y * 0.8f)), goToGame));
+                    sf::Vector2f(window.getSize().x / 2.5f, (window.getSize().y * 0.8f)), goToGame));
                 canGen = false;
             }
 
@@ -188,34 +177,34 @@ int main()
             {
                 //Generation Entitees
                 ClearVector(&buttons);
-                MapGenerator::SPGen(&spawnPoints);
+                MapGenerator::SPGen(compteurs[0]->GetValue(), compteurs[1]->GetValue() ,&spawnPoints);
                 MapGenerator::PlayerGen(compteurs[0]->GetValue(), compteurs[1]->GetValue(), &players, equipes, spawnPoints);
-                MapGenerator::MapGen(&platformes);
+                MapGenerator::MapRand(&platformes);
                 ClearVector(&compteurs);
                 mainPlayer = players[mainPlayernbre];
 
                 //Generation UI
-                sf::Vector2f* timerPosition =  new sf::Vector2f(window.getSize().x * 5 / 100, window.getSize().y * 90 / 100); 
+                sf::Vector2f* timerPosition =  new sf::Vector2f(window.getSize().x * 5.0f / 100.0f, window.getSize().y * 90.0f / 100.0f);
                 images.push_back( new Image(&AssetManager::GetTexture("CadreUI.png"), *timerPosition, sf::Vector2f(60, 60))); //Fond du Timer
-                compteurs.push_back(new Compteur(*timerPosition - sf::Vector2f(8,15), 0, maxTime, 0, 32, sf::Color::Blue)); //Timer temps restant
-                labels.push_back( new Label(sf::Vector2f(window.getSize().x / 3, window.getSize().y / 2), "Appuyer sur \"Enter\" pour jouer", 64, sf::Color::White)); //message de ready
+                compteurs.push_back(new Compteur(*timerPosition - sf::Vector2f(8,15), 0, int(maxTime), 0, 32, sf::Color::Blue)); //Timer temps restant
+                labels.push_back( new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "Appuyer sur \"Enter\" pour jouer", 64, sf::Color::White)); //message de ready
                 buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Inventaire", 32,
-                    sf::Vector2f(240, 80), sf::Vector2f(window.getSize().x - 240, 0), goToInventaire)); // Button Inventaire
+                    sf::Vector2f(240, 80), sf::Vector2f(window.getSize().x - 240.0f, 0), goToInventaire)); // Button Inventaire
                 buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBoutonPause.png"), &AssetManager::GetTexture("CadreBoutonPause.png"), "", 32,
-                    sf::Vector2f(128, 128), sf::Vector2f(window.getSize().x - 240, 100), goToPause)); //Button Pause
+                    sf::Vector2f(128, 128), sf::Vector2f(window.getSize().x - 240.0f, 100), goToPause)); //Button Pause
 
-                images.push_back(new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(window.getSize().x, window.getSize().y) * 0.45f,
-                    sf::Vector2f(window.getSize().x, window.getSize().y) * 0.9f)); //Fond de l'inventaire
-                images.push_back(new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(window.getSize().x, window.getSize().y) * 0.45f,
-                    sf::Vector2f(window.getSize().x*1.5, window.getSize().y*1.5)));//Fond de Pause
+                images.push_back(new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.45f,
+                    sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.9f)); //Fond de l'inventaire
+                images.push_back(new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.45f,
+                    sf::Vector2f(window.getSize().x*1.5f, window.getSize().y*1.5f)));//Fond de Pause
 
                 std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
-                float cptCI = 0;
+                int cptCI = 0;
                 float sizeCase = 100;
                 for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                 {
                     casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
-                        sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase, 0) * cptCI, it->first));
+                        sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase*cptCI, 0), it->first));
                     casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
                     cptCI++;
                 }
@@ -240,12 +229,14 @@ int main()
                 ClearVector(&labels);
                 ClearVector(&spawnPoints);
 
-                labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3, window.getSize().y / 2), "l'Equipe " + winner + " a gagne la guerre", 64, sf::Color::White)); //message de victoire
+                labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "l'Equipe " + winner + " a gagne la guerre", 64, sf::Color::White)); //message de victoire
             }
         }
        
-
+//-------------------------------------------------------------------------
         //Gestion interface "Menu/Parametres"
+//-------------------------------------------------------------------------
+
         if (showMenu || showParametres)
         {
 
@@ -304,7 +295,7 @@ int main()
         {
             deltaTime = clockDeltaTime.restart().asSeconds();
 
-            compteurs[0]->SetValue(maxTime - clockTimer.getElapsedTime().asSeconds());
+            compteurs[0]->SetValue(int(maxTime) - int(clockTimer.getElapsedTime().asSeconds()));
             if (compteurs[0]->GetValue() <= 0 && readyToPlay && canChange)
             {
                 //Swap Player
@@ -371,9 +362,9 @@ int main()
                             if (selectedWeapon == "Bazooka") //modifier pour prendre l'arme
                             {
                                 mainPlayer->Shoot("Bazooka");
-                                float theta = viseur->getRotation() * 3.1416 / 180;
-                                sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
-                                float power = PowerTimer.getElapsedTime().asMilliseconds();
+                                float theta = viseur->getRotation() * 3.1416f / 180;
+                                sf::Vector2f angle = sf::Vector2f(cosf(theta), sinf(theta));
+                                float power = float(PowerTimer.getElapsedTime().asMilliseconds());
                                 if (!mainPlayer->IsFaceRight())
                                 {
                                     angle = -angle;
@@ -391,7 +382,7 @@ int main()
                             {
                                 mainPlayer->Shoot("Awp");
                                 sf::Vector2f position;
-                                float theta = viseur->getRotation() * 3.1416 / 180;
+                                float theta = viseur->getRotation() * 3.1416f / 180;
                                 sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
                                 if (mainPlayer->IsFaceRight())position = mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x + 2, 0);
                                 else
@@ -536,7 +527,7 @@ int main()
                             cptE = 0;
                             for (Platforme* platforme : platformes)
                             {
-                                if (platforme->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                                if (platforme->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
                                 {
                                     delete(platforme);
                                     platformes.erase(platformes.begin() + cptE);
@@ -548,7 +539,7 @@ int main()
                         cptPl = 0;
                         for (Player* player : players)
                         {
-                            if (player->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                            if (player->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
                                 if (player->TakeDamage(missile->GetDamage()))
                                 {
                                     delete player;
@@ -593,7 +584,7 @@ int main()
 
                     if (platforme->GetCollider().CheckCollision(&playerCol, &direction, 1.0f)) // UNIQUEMENT PLAYER
                     {
-                        if (platforme->GetLayer() == 0) //DESTRUCTION EN FCT DU LAYER
+                        if (platforme->GetLayer() == 2) //DESTRUCTION EN FCT DU LAYER
                         {
                             player->Oncollision(direction);
                             delete(platforme);
@@ -623,7 +614,7 @@ int main()
                             cptE = 0;
                             for (Platforme* platforme : platformes)
                             {
-                                if (platforme->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                                if (platforme->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
                                 {
                                     delete(platforme);
                                     platformes.erase(platformes.begin() + cptE);
@@ -635,7 +626,7 @@ int main()
                         cptPl = 0;
                         for (Player* player : players)
                         {
-                            if (player->GetCollider().CheckCollisionCircle(&exploCol, exploCol.GetHalfSizeCircle().x))
+                            if (player->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
                                 if (player->TakeDamage(missile->GetDamage()))
                                 {
                                     delete player;
@@ -823,100 +814,10 @@ int main()
     return 0;
 }
 
-
-void ClearVector(std::vector<Platforme*>* vect)
+template<class T>
+void ClearVector(std::vector<T*>* vect)
 {
-    for (Platforme* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<sf::Vector2f*>* vect)
-{
-    for (sf::Vector2f* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Button*>* vect)
-{
-    for (Button* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Player*>* vect)
-{
-    for (Player* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Missile*>* vect)
-{
-    for (Missile* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Caisse*>* vect)
-{
-    for (Caisse* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Compteur*>* vect)
-{
-    for (Compteur* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Equipe*>* vect)
-{
-    for (Equipe* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<CaseInventaire*>* vect)
-{
-    for (CaseInventaire* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Label*>* vect)
-{
-    for (Label* element : *vect)
-    {
-        delete element;
-    }
-    vect->clear();
-}
-
-void ClearVector(std::vector<Image*>* vect)
-{
-    for (Image* element : *vect)
+    for (T* element : *vect)
     {
         delete element;
     }
@@ -945,9 +846,9 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
         return true;
     }
 
-    for (int i = 0; i < players.size() - 1; i++)
+    for (unsigned int i = 0; i < players.size() - 1; i++)
     {
-        if (!*players[i]->GetEquipe()->GetTagEquipe() == *players[i + 1]->GetEquipe()->GetTagEquipe()) {
+        if (*players[i]->GetEquipe()->GetTagEquipe() != *players[i + 1]->GetEquipe()->GetTagEquipe()) {
             break;
         }
         
