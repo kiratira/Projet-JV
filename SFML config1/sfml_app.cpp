@@ -299,6 +299,7 @@ int main()
             compteurs[0]->SetValue(int(maxTime) - int(clockTimer.getElapsedTime().asSeconds()));
             if (compteurs[0]->GetValue() <= 0 && readyToPlay && canChange)
             {
+#pragma region SwapPlayer
                 //Swap Player
                 mainPlayernbre++;
                 if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -310,6 +311,19 @@ int main()
                 canChange = false;
                 showViseur = false;
                 viseur->setRotation(0);
+                MapGenerator::CaisseGen(&caisses);
+                ClearVector(&casesInventaire);
+                std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                int cptCI = 0;
+                float sizeCase = 100;
+                for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                {
+                    casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                        sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                    casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                    cptCI++;
+                }
+#pragma endregion
             }
 
 
@@ -502,6 +516,7 @@ int main()
                         if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
                         {
                             std::cout << "Swap1" << std::endl;
+#pragma region SwapPlayer
                             //Swap Player
                             mainPlayernbre++;
                             if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -513,6 +528,19 @@ int main()
                             canChange = false;
                             showViseur = false;
                             viseur->setRotation(0);
+                            MapGenerator::CaisseGen(&caisses);
+                            ClearVector(&casesInventaire);
+                            std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                            int cptCI = 0;
+                            float sizeCase = 100;
+                            for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                            {
+                                casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                    sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                                casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                                cptCI++;
+                            }
+#pragma endregion
                         }
 
                         break;
@@ -566,7 +594,7 @@ int main()
 
                         if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
                         {
-                            std::cout << "Swap2" << std::endl;
+#pragma region SwapPlayer
                             //Swap Player
                             mainPlayernbre++;
                             if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -578,6 +606,19 @@ int main()
                             canChange = false;
                             showViseur = false;
                             viseur->setRotation(0);
+                            MapGenerator::CaisseGen(&caisses);
+                            ClearVector(&casesInventaire);
+                            std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                            int cptCI = 0;
+                            float sizeCase = 100;
+                            for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                            {
+                                casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                    sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                                casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                                cptCI++;
+                            }
+#pragma endregion
                         }
                         
                     }
@@ -603,6 +644,43 @@ int main()
                             player->Oncollision(direction);
                             delete(platforme);
                             platformes.erase(platformes.begin() + cptP);
+                        }
+                        else if (platforme->GetLayer() == 3) //Case eau
+                        {
+                            if (player->TakeDamage(999))
+                            {
+                                delete player;
+                                players.erase(players.begin() + cptPl);
+                            }
+                            if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                            {
+#pragma region SwapPlayer
+                                //Swap Player
+                                mainPlayernbre++;
+                                if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                                SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                                mainPlayer = players[mainPlayernbre];
+                                clockTimer.restart().asSeconds();
+                                readyToPlay = false;
+                                showReady = true;
+                                canChange = false;
+                                showViseur = false;
+                                viseur->setRotation(0);
+                                MapGenerator::CaisseGen(&caisses);
+                                ClearVector(&casesInventaire);
+                                std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                                int cptCI = 0;
+                                float sizeCase = 100;
+                                for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                                {
+                                    casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                        sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                                    casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                                    cptCI++;
+                                }
+#pragma endregion
+                            }
+                            break;
                         }
                         else
                         {
@@ -645,10 +723,7 @@ int main()
                                 if (player->TakeDamage(missile->GetDamage()))
                                 {
                                     delete player;
-                                    players.erase(players.begin() + cptPl);
-
-                                                              
-                                    
+                                    players.erase(players.begin() + cptPl);                                                             
                                 }                      
                             }
                             cptPl++;
@@ -659,7 +734,7 @@ int main()
 
                         if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
                         {
-                            std::cout << "Swap3" << std::endl;
+#pragma region SwapPlayer
                             //Swap Player
                             mainPlayernbre++;
                             if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -671,6 +746,19 @@ int main()
                             canChange = false;
                             showViseur = false;
                             viseur->setRotation(0);
+                            MapGenerator::CaisseGen(&caisses);
+                            ClearVector(&casesInventaire);
+                            std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                            int cptCI = 0;
+                            float sizeCase = 100;
+                            for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                            {
+                                casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                    sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                                casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                                cptCI++;
+                            }
+#pragma endregion             
                         }                 
                     }
                     cptM++;
@@ -700,6 +788,17 @@ int main()
                             player->GetEquipe()->GetInventaire()->AddMunition(caisse->GetTypeMunition(), caisse->GetNbreMunition());
                             delete(caisse);
                             caisses.erase(caisses.begin() + cptC);
+                            ClearVector(&casesInventaire);
+                            std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                            int cptCI = 0;
+                            float sizeCase = 100;
+                            for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                            {
+                                casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                    sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                                casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                                cptCI++;
+                            }
                         }
                         else if (caisse->GetTypeCaisse() == 2)
                         {
@@ -846,6 +945,7 @@ void ClearVector(std::vector<T*>* vect)
 void SwapMainPlayer(Player* actual, Player* next)
 {
     actual->SetMovement(false); 
+
 }
 
 bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::string* winner) {

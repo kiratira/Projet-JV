@@ -11,6 +11,7 @@
 class MapGenerator
 {
 public:
+
 	static void MapGen(std::vector<Platforme*>* platformes);
 	static void MapRand(std::vector<Platforme*>* plateformes);
 	//static MapGenerator* Instance() { return sInstance; }
@@ -21,6 +22,6 @@ public:
 private:
 	static const int largeurMap = 1000;
 	static std::map<int, std::string> m_type;
-	static int tailleType;
+
 };
 

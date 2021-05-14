@@ -18,9 +18,8 @@ int highest = 0;
 
 void MapGenerator::MapGen(std::vector<Platforme*>* platformes)
 {
-    tailleType = m_type.size();
-    m_type.insert({ 0,"Bazooka" });
-    m_type.insert({ 1,"Awp" });
+   // tailleType = m_type.size();
+    
 
     for (float y = 200.0; y < 404.0; y += 8)
     {
@@ -95,6 +94,8 @@ void MapGenerator::MapRand(std::vector<Platforme*>* platformes)
         for (int high = 0; high > -height; high--) {
             platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(largeurBlock, largeurBlock), sf::Vector2f(largeurBlock * (i-demiMap), largeurBlock * high), 0));
         }
+
+        platformes->push_back(new Platforme("PixelEau.png", sf::Vector2f(10000, 8), sf::Vector2f(-2000, 20), 3)); // pixel d'eau
     }
 }
 
@@ -148,17 +149,22 @@ void MapGenerator::SPGen(int nbEquipes, int nbJoueurs, std::vector<sf::Vector2f*
     }
 }
 
+
+std::map<int, std::string> MapGenerator::m_type = { {0,"Bazooka"},{1,"Awp"} };
+
+
+
 void MapGenerator::CaisseGen(std::vector<Caisse*>* caisses)
 {
-    if (rand() % 3 - 1)
+    if (rand() % 4)
     {
-        caisses->push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand()%1000, -100), 30));
+        caisses->push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() % 1000, -400), 30));
     }
-    else 
+    else
     {
-        caisses->push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() % 1000, -100), m_type[rand()%tailleType - 1], 3));
+        int a = rand() % m_type.size();
+        std::cout << a << std::endl;
+
+        caisses->push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() %1000, -400), m_type[a], 2));
     }
 }
-
-
-
