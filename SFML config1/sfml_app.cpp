@@ -230,6 +230,7 @@ int main()
                 ClearVector(&spawnPoints);
 
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "l'Equipe " + winner + " a gagne la guerre", 64, sf::Color::White)); //message de victoire
+                //buttons.push_back(new BoolButton())
             }
         }
        
@@ -444,7 +445,7 @@ int main()
 
             for (Player* player : players)
             {
-                player->Update(deltaTime);
+                player->Update(deltaTime,&showViseur);
             }
 
             for (Missile* missile : missiles)
@@ -498,16 +499,21 @@ int main()
                         delete(balle);
                         balles.erase(balles.begin() + cptT);
 
-                        //Swap player
-                        mainPlayernbre++;
-                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                        mainPlayer = players[mainPlayernbre];
-                        readyToPlay = false;
-                        showReady = true;
-                        canChange = false;
-                        showViseur = false;
-                        viseur->setRotation(0);
+                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                        {
+                            std::cout << "Swap1" << std::endl;
+                            //Swap Player
+                            mainPlayernbre++;
+                            if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                            SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                            mainPlayer = players[mainPlayernbre];
+                            clockTimer.restart().asSeconds();
+                            readyToPlay = false;
+                            showReady = true;
+                            canChange = false;
+                            showViseur = false;
+                            viseur->setRotation(0);
+                        }
 
                         break;
                     }
@@ -558,17 +564,21 @@ int main()
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
 
-                        //Swap player
-                        std::cout << "BOOM" << std::endl;
-                        mainPlayernbre++;
-                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                        mainPlayer = players[mainPlayernbre];
-                        readyToPlay = false;
-                        showReady = true;
-                        canChange = false;
-                        showViseur = false;
-                        viseur->setRotation(0);
+                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                        {
+                            std::cout << "Swap2" << std::endl;
+                            //Swap Player
+                            mainPlayernbre++;
+                            if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                            SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                            mainPlayer = players[mainPlayernbre];
+                            clockTimer.restart().asSeconds();
+                            readyToPlay = false;
+                            showReady = true;
+                            canChange = false;
+                            showViseur = false;
+                            viseur->setRotation(0);
+                        }
                         
                     }
                     cptM++;
@@ -637,7 +647,7 @@ int main()
                                     delete player;
                                     players.erase(players.begin() + cptPl);
 
-                                    CheckPlayerAlive(players, &showGame, &showGameOver, &winner);                            
+                                                              
                                     
                                 }                      
                             }
@@ -647,18 +657,21 @@ int main()
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
 
-                        //Swap Player
-                        mainPlayernbre++;
-                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                        mainPlayer = players[mainPlayernbre];
-                        clockTimer.restart().asSeconds();
-                        readyToPlay = false;
-                        showReady = true;
-                        canChange = false;
-                        showViseur = false;
-                        viseur->setRotation(0);
-          
+                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                        {
+                            std::cout << "Swap3" << std::endl;
+                            //Swap Player
+                            mainPlayernbre++;
+                            if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                            SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                            mainPlayer = players[mainPlayernbre];
+                            clockTimer.restart().asSeconds();
+                            readyToPlay = false;
+                            showReady = true;
+                            canChange = false;
+                            showViseur = false;
+                            viseur->setRotation(0);
+                        }                 
                     }
                     cptM++;
                 }
@@ -792,7 +805,7 @@ int main()
         if (showGameOver)
         {
             labels[0]->Draw(window);
-            buttons[0]->Draw(window);
+            //buttons[0]->Draw(window);
         }
 
         window.display();

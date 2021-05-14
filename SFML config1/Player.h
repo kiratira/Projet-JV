@@ -39,7 +39,7 @@ public:
 	~Player();
 
 
-	void Update(float deltaTime);
+	void Update(float deltaTime, bool* showViseur);
 	void Draw(sf::RenderWindow& window) { window.draw(body); window.draw(cpLife); };
 	void Oncollision(sf::Vector2f direction);
 

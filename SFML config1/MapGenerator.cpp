@@ -3,8 +3,8 @@
 #include <random>
 #include "AssetManager.h"
 
+
 /* caractéristiques de la map */
-#define largeurMap 1000                         //largeur de la map
 #define largeurBlock 4.0f                       // largeur des blocs
 #define courbure 120                            // définit la courbure de la colline
 #define filtrage 10                             // le nombre d'échantillons 
@@ -16,18 +16,11 @@
 int highest = 0;
 
 
-// MapGenerator* MapGenerator::sInstance = nullptr;
-
-MapGenerator::MapGenerator()
-{
-}
-
-MapGenerator::~MapGenerator()
-{
-}
-
 void MapGenerator::MapGen(std::vector<Platforme*>* platformes)
 {
+    tailleType = m_type.size();
+    m_type.insert({ 0,"Bazooka" });
+    m_type.insert({ 1,"Awp" });
 
     for (float y = 200.0; y < 404.0; y += 8)
     {
@@ -152,6 +145,18 @@ void MapGenerator::SPGen(int nbEquipes, int nbJoueurs, std::vector<sf::Vector2f*
         else {
             spawnPoints->push_back(new sf::Vector2f( position*i, hauteur));
         }
+    }
+}
+
+void MapGenerator::CaisseGen(std::vector<Caisse*>* caisses)
+{
+    if (rand() % 3 - 1)
+    {
+        caisses->push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand()%1000, -100), 30));
+    }
+    else 
+    {
+        caisses->push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() % 1000, -100), m_type[rand()%tailleType - 1], 3));
     }
 }
 
