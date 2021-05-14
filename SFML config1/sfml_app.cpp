@@ -73,39 +73,10 @@ int main()
 
 
 #pragma region TestZONE
-    
-
-   // //Test Generation player + Main player + Equipe
-
-   ///* Equipe* equipe1 = new Equipe(1);
-   // Equipe* equipe2 = new Equipe(2);*/
-
-   // /*players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.2f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(0, 20), 80.0f, 100, equipe1));
-   // players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(60, 0), 80.0f, 100, equipe2));
-   // players.push_back(new Player(&AssetManager::GetTexture("PlayerSheet.png"), sf::Vector2u(4, 3), 0.3f, 200.0f, sf::Vector2f(128, 128) / 3.0f, sf::Vector2f(200, 0), 80.0f, 100, equipe2));*/
-
-
-
-   // //Test Generation Map
-   // MapGenerator::SPGen(&spawnPoints);
-   // MapGenerator::MapGen(&platformes);
-   // MapGenerator::PlayerGen(2, 1, &players, equipes, spawnPoints);
-
-   // //MAIN PLAYER SELECTION
-   // 
-
-   // //caisse de munition
-
-   // caisses.push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(270, 0), "Bazooka", 3));
-   // caisses.push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(400, 0), "Bazooka", 3));
-   // caisses.push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(330, 0), 30));
 
    // //TEST SOUND (Fonctionnel)
-   // /*
-   // sf::Sound sound;
-   // sound.setBuffer(AssetManager::GetSoundBuffer("boom.ogg")); 
-   // */
-    
+   
+   
 
 
 
@@ -136,6 +107,17 @@ int main()
     goToMenu.push_back(&showMenu);
     goToMenu.push_back(&canGen);
 
+    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen,musicGame,soundAmmo,soundHeal,soundHit;
+    soundExplosion.setBuffer(AssetManager::GetSoundBuffer("Explosion.ogg"));
+    soundAwp.setBuffer(AssetManager::GetSoundBuffer("Awp.ogg"));
+    soundBazooka.setBuffer(AssetManager::GetSoundBuffer("Bazooka.ogg"));
+    musicOpen.setBuffer(AssetManager::GetSoundBuffer("Open.ogg"));
+    musicGame.setBuffer(AssetManager::GetSoundBuffer("FondSonore.ogg"));
+    soundHeal.setBuffer(AssetManager::GetSoundBuffer("Heal.ogg"));
+    soundAmmo.setBuffer(AssetManager::GetSoundBuffer("Ammo.ogg"));
+    soundHit.setBuffer(AssetManager::GetSoundBuffer("hit.ogg"));
+
+
     while (window.isOpen())
     {
         // Generation
@@ -149,6 +131,7 @@ int main()
                 buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Lancer partie", 32, sf::Vector2f(300, 70),
                     sf::Vector2f(window.getSize().x / 2.5f, (window.getSize().y / 2.0f) - 10.0f), goToParametes));
                 canGen = false;
+                musicOpen.play();
             }
 
             // Generation "Parametres"
@@ -156,6 +139,8 @@ int main()
             {
                 ClearVector(&buttons); //clear de tous les boutons du menu
                 sf::Vector2f* sizeButton = new sf::Vector2f(64, 64);
+                labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 3.0f),"Equipes",24,sf::Color::Yellow));
+                labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 2.0f),"Joueurs",24,sf::Color::Yellow));
                 compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2.0f - 100.0f, window.getSize().y / 3.0f), 2, 4, 2, 32, sf::Color::Blue)); // Equipe
                 compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2.0f - 100.0f, window.getSize().y / 2.0f), 1, 4, 1, 32, sf::Color::Blue)); // Personnages
                 buttons.push_back(new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),
@@ -175,6 +160,10 @@ int main()
             // Generation "Game"
             if (showGame)
             {
+
+                musicGame.play();
+                musicOpen.stop();
+                ClearVector(&labels);
                 //Generation Entitees
                 ClearVector(&buttons);
                 MapGenerator::SPGen(compteurs[0]->GetValue(), compteurs[1]->GetValue() ,&spawnPoints);
@@ -394,6 +383,7 @@ int main()
                                     missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24),
                                         mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x, -mainPlayer->GetSize().y / 2), 50, angle, power));
                                 }
+                                soundBazooka.play();
                          
                             }
                             if (selectedWeapon == "Awp")
@@ -409,6 +399,7 @@ int main()
                                     position = mainPlayer->GetPosition() + sf::Vector2f(-mainPlayer->GetSize().x + 2, 0);
                                 }
                                 balles.push_back(new Balle(position, angle));
+                                soundAwp.play();
                             }
                             showViseur = false;
                             viseur->setRotation(0);
@@ -509,7 +500,7 @@ int main()
                             CheckPlayerAlive(players, &showGame, &showGameOver, &winner);
                             
                         }
-
+                        soundHit.play();
                         delete(balle);
                         balles.erase(balles.begin() + cptT);
 
@@ -557,8 +548,8 @@ int main()
                     {
                         Collider exploCol = missile->GetExploCollider();
 
-                        //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
-                        //sound.play();
+
+                        soundExplosion.play();
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -583,9 +574,8 @@ int main()
                                     delete player;
                                     players.erase(players.begin() + cptPl);
 
-                                    CheckPlayerAlive(players, &showGame, &showGameOver, &winner);
-
                                 }
+                            soundHit.play();
                             cptPl++;
                         }
 
@@ -652,34 +642,7 @@ int main()
                                 delete player;
                                 players.erase(players.begin() + cptPl);
                             }
-                            if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
-                            {
-#pragma region SwapPlayer
-                                //Swap Player
-                                mainPlayernbre++;
-                                if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                                SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
-                                mainPlayer = players[mainPlayernbre];
-                                clockTimer.restart().asSeconds();
-                                readyToPlay = false;
-                                showReady = true;
-                                canChange = false;
-                                showViseur = false;
-                                viseur->setRotation(0);
-                                MapGenerator::CaisseGen(&caisses);
-                                ClearVector(&casesInventaire);
-                                std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
-                                int cptCI = 0;
-                                float sizeCase = 100;
-                                for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
-                                {
-                                    casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
-                                        sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
-                                    casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
-                                    cptCI++;
-                                }
-#pragma endregion
-                            }
+                            if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))  
                             break;
                         }
                         else
@@ -698,8 +661,7 @@ int main()
                     {
                         Collider exploCol = missile->GetExploCollider();
 
-                        //sound.setPosition(missile->GetPosition().x, missile->GetPosition().y, 0);
-                        //sound.play();
+                        soundExplosion.play();
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -724,11 +686,12 @@ int main()
                                 {
                                     delete player;
                                     players.erase(players.begin() + cptPl);                                                             
-                                }                      
+                                }      
+                                soundHit.play();
                             }
                             cptPl++;
                         }
-
+                        
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
 
@@ -799,12 +762,14 @@ int main()
                                 casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
                                 cptCI++;
                             }
+                            soundAmmo.play();
                         }
                         else if (caisse->GetTypeCaisse() == 2)
                         {
                             player->RecoverLife(caisse->GetNbreHeal());
                             delete(caisse);
                             caisses.erase(caisses.begin() + cptC);
+                            soundHeal.play();
                         }
 
                     }
@@ -820,7 +785,7 @@ int main()
 
         
 
-        //sf::Listener::setPosition(mainPlayer->GetPosition().x, mainPlayer->GetPosition().y, 0);
+       
 
         window.clear();
 
@@ -846,11 +811,17 @@ int main()
             {
                 compteur->Draw(window);
             }
+
+            for (Label* label : labels)
+            {
+                label->Draw(window);
+            }
         }
 
         //GameView
         if (showGame && doneGen)
         {       
+            sf::Listener::setPosition(mainPlayer->GetPosition().x, mainPlayer->GetPosition().y, 0);
             view.setCenter(mainPlayer->GetPosition());
             window.setView(view);
 

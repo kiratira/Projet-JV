@@ -156,7 +156,7 @@ std::map<int, std::string> MapGenerator::m_type = { {0,"Bazooka"},{1,"Awp"} };
 
 void MapGenerator::CaisseGen(std::vector<Caisse*>* caisses)
 {
-    if (rand() % 4)
+    if (rand() % 3 == 1)
     {
         caisses->push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() % 1000, -400), 30));
     }
