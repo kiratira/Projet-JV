@@ -3,9 +3,10 @@
 
 inventory::inventory()
 {
-	m_munitions.insert({ "Bazooka", 10 });
-	m_munitions.insert({ "Awp", 5 });
+	m_munitions.insert({ "Bazooka", 5 });
+	m_munitions.insert({ "Awp", 3 });
 	m_munitions.insert({ "Grenade", 2 });
+	m_munitions.insert({ "Mine", 1 });
 }
 
 inventory::~inventory()

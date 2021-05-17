@@ -60,7 +60,6 @@ public:
 
 	void Update(float deltaTime);
 	void Draw(sf::RenderWindow& window);
-
 	void DrawExplosion(sf::RenderWindow& window);
 	void Oncollision(sf::Vector2f direction);
 
@@ -75,9 +74,44 @@ private:
 	sf::Vector2f angle;
 	float power;
 	int damage = 60;
-	int timeExplo;
+	int timeExplo = 0;
 	float maxTime;
 	sf::Clock timer;
 	sf::Text txtTimer;
 };
 
+
+class Mine : public Rigidbody
+{
+public:
+	Mine(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo, float radiusDetection, float timeExplo, float beforeActi);
+	~Mine();
+
+	void Update(float deltaTime);
+	void Draw(sf::RenderWindow& window);
+	void DrawExplosion(sf::RenderWindow& window);
+	void Oncollision(sf::Vector2f direction);
+	void Activate();
+	void Detect() { if(activated)detect = true; }
+
+	int GetDamage() { return damage; }
+	bool isTimeOut();
+	bool isDetected() { return detect; }
+	bool isActivated() { return activated; }
+	Collider GetExploCollider() { return Collider(&explosion); }
+	Collider GetDetectionCollider() { return Collider(&detectionZone); }
+
+private:
+	sf::RectangleShape body;
+	sf::CircleShape explosion;
+	sf::CircleShape detectionZone;
+	sf::Vector2f velocity;
+	int damage = 60;
+	int timeExplo;
+	float maxTime;
+	float beforeActi;
+	sf::Clock timer;
+	sf::Text txtTimer;
+	bool activated = false;
+	bool detect = false;
+};

@@ -119,7 +119,8 @@ bool Player::TakeDamage(int damage)
 
 bool Player::Shoot(std::string type)
 {
-	return equipe->GetInventaire()->UseMunition(type);
+	if (equipe->GetInventaire()->UseMunition(type)) return true;
+	else return false;
 }
 
 int Player::GetMunition(std::string type)

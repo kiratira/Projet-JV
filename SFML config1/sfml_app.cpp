@@ -47,6 +47,7 @@ int main()
     std::vector<Platforme*> platformes;
     std::vector<Missile*> missiles;
     std::vector<Grenade*> grenades;
+    std::vector<Mine*> mines;
     std::vector<Caisse*> caisses;
     std::vector<Balle*> balles;
     std::vector<CaseInventaire*> casesInventaire;
@@ -91,6 +92,7 @@ int main()
     unsigned int cptM;
     unsigned int cptT;
     unsigned int cptP;
+    unsigned int cptMine;
 
     // mise des booleens dans des vecteurs
     std::vector<bool*> goToParametes;
@@ -117,7 +119,7 @@ int main()
     goToMenu.push_back(&showMenu);
     goToMenu.push_back(&canGen);
 
-    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen, musicGame, soundAmmo, soundHeal, soundHit, soundGrenade;
+    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen, musicGame, soundAmmo, soundHeal, soundHit, soundGrenade,soundMine;
     soundExplosion.setBuffer(AssetManager::GetSoundBuffer("Explosion.ogg"));
     soundAwp.setBuffer(AssetManager::GetSoundBuffer("Awp.ogg"));
     soundBazooka.setBuffer(AssetManager::GetSoundBuffer("Bazooka.ogg"));
@@ -127,6 +129,7 @@ int main()
     soundAmmo.setBuffer(AssetManager::GetSoundBuffer("Ammo.ogg"));
     soundHit.setBuffer(AssetManager::GetSoundBuffer("hit.ogg"));
     soundGrenade.setBuffer(AssetManager::GetSoundBuffer("Grenade.ogg"));
+    soundMine.setBuffer(AssetManager::GetSoundBuffer("Mine.ogg"));
 
 
     while (window.isOpen())
@@ -271,6 +274,7 @@ int main()
                 ClearVector(&compteurs);
                 ClearVector(&labels);
                 ClearVector(&spawnPoints);
+                ClearVector(&mines);
 
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "l'Equipe " + winner + " a gagne !", 64, sf::Color::White)); //message de victoire
                 buttons.push_back(
@@ -427,60 +431,82 @@ int main()
                         if (showViseur)
                         {
                             isPressed = false;
-                            if (selectedWeapon == "Bazooka") //modifier pour prendre l'arme
+                            if (selectedWeapon == "Bazooka")
                             {
-                                mainPlayer->Shoot("Bazooka");
-                                float theta = viseur->getRotation() * 3.1416f / 180;
-                                sf::Vector2f angle = sf::Vector2f(cosf(theta), sinf(theta));
-                                float power = float(PowerTimer.getElapsedTime().asMilliseconds());
-                                if (!mainPlayer->IsFaceRight())
+                                if (mainPlayer->Shoot("Bazooka"))
                                 {
-                                    angle = -angle;
-                                    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24),
-                                        mainPlayer->GetPosition() - sf::Vector2f(mainPlayer->GetSize().x, mainPlayer->GetSize().y / 2), 50, angle, power));                             
-                                }
-                                else
-                                {
-                                    missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24),
-                                        mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x, -mainPlayer->GetSize().y / 2), 50, angle, power));
-                                }
-                                soundBazooka.play();
-                         
+                                    float theta = viseur->getRotation() * 3.1416f / 180;
+                                    sf::Vector2f angle = sf::Vector2f(cosf(theta), sinf(theta));
+                                    float power = float(PowerTimer.getElapsedTime().asMilliseconds());
+                                    if (!mainPlayer->IsFaceRight())
+                                    {
+                                        angle = -angle;
+                                        missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24),
+                                            mainPlayer->GetPosition() - sf::Vector2f(mainPlayer->GetSize().x, mainPlayer->GetSize().y / 2), 50, angle, power));
+                                    }
+                                    else
+                                    {
+                                        missiles.push_back(new Missile(&AssetManager::GetTexture("missile.png"), sf::Vector2f(13, 24),
+                                            mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x, -mainPlayer->GetSize().y / 2), 50, angle, power));
+                                    }
+                                    soundBazooka.play();
+                                }                         
                             }
-                            else if (selectedWeapon == "Grenade") //modifier pour prendre l'arme 
+                            else if (selectedWeapon == "Grenade")
                             {
-                                mainPlayer->Shoot("Grenade");
-                                float theta = viseur->getRotation() * 3.1416f / 180;
-                                sf::Vector2f angle = sf::Vector2f(cosf(theta), sinf(theta));
-                                float power = float(PowerTimer.getElapsedTime().asMilliseconds());
-                                if (!mainPlayer->IsFaceRight())
+                                if (mainPlayer->Shoot("Grenade"))
                                 {
-                                    angle = -angle;
-                                    grenades.push_back(new Grenade(&AssetManager::GetTexture("Grenade.png"), sf::Vector2f(16, 16),
-                                        mainPlayer->GetPosition() - sf::Vector2f(mainPlayer->GetSize().x, mainPlayer->GetSize().y / 2),120, angle, power, 5));
+                                    float theta = viseur->getRotation() * 3.1416f / 180;
+                                    sf::Vector2f angle = sf::Vector2f(cosf(theta), sinf(theta));
+                                    float power = float(PowerTimer.getElapsedTime().asMilliseconds());
+                                    if (!mainPlayer->IsFaceRight())
+                                    {
+                                        angle = -angle;
+                                        grenades.push_back(new Grenade(&AssetManager::GetTexture("Grenade.png"), sf::Vector2f(16, 16),
+                                            mainPlayer->GetPosition() - sf::Vector2f(mainPlayer->GetSize().x, mainPlayer->GetSize().y / 2), 120, angle, power, 5));
+                                    }
+                                    else
+                                    {
+                                        grenades.push_back(new Grenade(&AssetManager::GetTexture("Grenade.png"), sf::Vector2f(16, 16),
+                                            mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x, -mainPlayer->GetSize().y / 2), 120, angle, power, 5));
+                                    }
+                                    soundGrenade.play();
                                 }
-                                else
-                                {
-                                    grenades.push_back(new Grenade(&AssetManager::GetTexture("Grenade.png"), sf::Vector2f(16, 16),
-                                        mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x, -mainPlayer->GetSize().y / 2), 120, angle, power, 5));
+                            }
+                            else if (selectedWeapon == "Mine")
+                            {
+                                if (mainPlayer->Shoot("Mine")) {
+                                    mines.push_back(new Mine(&AssetManager::GetTexture("Mine.png"), sf::Vector2f(16, 8), mainPlayer->GetPosition(), 85, 60, 3, 4));
                                 }
-                                soundGrenade.play();
+                                
 
+                                ClearVector(&casesInventaire);
+                                std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                                int cptCI = 0;
+                                for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                                {
+                                    casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                        sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                                    casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                                    cptCI++;
+                                }
                             }
                             else if (selectedWeapon == "Awp")
                             {
-                                mainPlayer->Shoot("Awp");
-                                sf::Vector2f position;
-                                float theta = viseur->getRotation() * 3.1416f / 180;
-                                sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
-                                if (mainPlayer->IsFaceRight())position = mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x + 2, 0);
-                                else
-                                {
-                                    angle = -angle;
-                                    position = mainPlayer->GetPosition() + sf::Vector2f(-mainPlayer->GetSize().x + 2, 0);
+                                if (mainPlayer->Shoot("Awp"))
+                                {         
+                                    sf::Vector2f position;
+                                    float theta = viseur->getRotation() * 3.1416f / 180;
+                                    sf::Vector2f angle = sf::Vector2f(cos(theta), sin(theta));
+                                    if (mainPlayer->IsFaceRight())position = mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x + 2, 0);
+                                    else
+                                    {
+                                        angle = -angle;
+                                        position = mainPlayer->GetPosition() + sf::Vector2f(-mainPlayer->GetSize().x + 2, 0);
+                                    }
+                                    balles.push_back(new Balle(position, angle));
+                                    soundAwp.play();
                                 }
-                                balles.push_back(new Balle(position, angle));
-                                soundAwp.play();
                             }
                             showViseur = false;
                             viseur->setRotation(0);
@@ -609,6 +635,77 @@ int main()
                 }
                 cptG++;
             }
+            cptMine = 0;
+            for (Mine* mine : mines)
+            {
+                mine->Update(deltaTime);
+
+                if (mine->isTimeOut())
+                {
+                    Collider exploCol = mine->GetExploCollider();
+                    soundExplosion.play();
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        cptE = 0;
+                        for (Platforme* platforme : platformes)
+                        {
+                            if (platforme->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
+                            {
+                                delete(platforme);
+                                platformes.erase(platformes.begin() + cptE);
+                            }
+
+                            cptE++;
+                        }
+                    }
+                    cptPl = 0;
+                    for (Player* player : players)
+                    {
+                        if (player->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
+                        {
+                            if (player->TakeDamage(mine->GetDamage()))
+                            {
+                                delete player;
+                                players.erase(players.begin() + cptPl);
+                            }
+                            soundHit.play();
+                        }
+                        cptPl++;
+                    }
+
+                    if (!CheckPlayerAlive(players, &showGame, &showGameOver, &canGen, &doneGen, &winner))
+                    {
+#pragma region SwapPlayer
+                        //Swap Player
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        clockTimer.restart().asSeconds();
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
+                        MapGenerator::CaisseGen(&caisses);
+                        ClearVector(&casesInventaire);
+                        std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                        int cptCI = 0;
+                        for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                        {
+                            casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                            casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                            cptCI++;
+                        }
+#pragma endregion             
+                    }
+                    delete(mine);
+                    mines.erase(mines.begin() + cptMine);
+                }
+                cptM++;
+            }
 
             for (Balle* balle : balles)
             {
@@ -631,6 +728,21 @@ int main()
             cptPl = 0;
             for (Player* player : players)
             {
+                cptMine = 0;
+
+                for (Mine* mine : mines)
+                {
+                    Collider mineDetectionCol = mine->GetDetectionCollider();
+                    if (player->GetCollider().CheckCollisionCircle(&mineDetectionCol, int(mineDetectionCol.GetHalfSizeCircle().x)))
+                    {
+                        if (!mine->isDetected() && mine->isActivated())
+                        {
+                            mine->Detect();
+                            soundMine.play();
+                        }        
+                    }
+                }
+
                 cptT = 0;
                 for (Balle* balle : balles)
                 {
@@ -880,6 +992,13 @@ int main()
                         grenade->Oncollision(direction);
                     }
                 }
+                for (Mine* mine : mines)
+                {
+                    Collider mineCol = mine->GetCollider();
+                    if (platforme->GetCollider().CheckCollision(&mineCol, &direction, 1.0f)) {
+                        mine->Oncollision(direction);
+                    }
+                }
 
                 cptP++;
             }
@@ -926,11 +1045,7 @@ int main()
             
         }
 
-#pragma region Camera + Affichage
-
-        
-
-       
+#pragma region Camera + Affichage 
 
         window.clear();
 
@@ -984,6 +1099,11 @@ int main()
             for (Grenade* grenade : grenades)
             {
                 grenade->Draw(window);
+            }
+
+            for (Mine* mine : mines)
+            {
+                mine->Draw(window);
             }
 
             for (Platforme* platforme : platformes)
@@ -1046,6 +1166,7 @@ int main()
     ClearVector(&images);
     ClearVector(&labels);
     ClearVector(&grenades);
+    ClearVector(&mines);
 
     delete(viseur);
 #pragma endregion

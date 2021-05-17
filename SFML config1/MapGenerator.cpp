@@ -157,7 +157,7 @@ void MapGenerator::SPGen(int nbEquipes, int nbJoueurs, std::vector<sf::Vector2f*
 }
 
 
-std::map<int, std::string> MapGenerator::m_type = { {0,"Bazooka"},{1,"Awp"},{2,"Grenade"} };
+std::map<int, std::string> MapGenerator::m_type = { {0,"Bazooka"},{1,"Awp"},{2,"Grenade"},{3,"Mine"} };
 
 
 
@@ -165,13 +165,13 @@ void MapGenerator::CaisseGen(std::vector<Caisse*>* caisses)
 {
     if (rand() % 3 == 1)
     {
-        caisses->push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() % 1000, -400), 30));
+        caisses->push_back(new CaisseHeal(&AssetManager::GetTexture("HealCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand()%2000  , -400), 30));
     }
     else
     {
         int a = rand() % m_type.size();
         std::cout << a << std::endl;
 
-        caisses->push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() %1000, -400), m_type[a], 2));
+        caisses->push_back(new CaisseMunition(&AssetManager::GetTexture("AmmunitionCrate.png"), sf::Vector2f(32, 32), sf::Vector2f(largeurMap - rand() %2000, -400), m_type[a], 2));
     }
 }

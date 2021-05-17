@@ -105,7 +105,7 @@ void Grenade::Update(float deltaTime)
 	velocity.y += 981.0f * deltaTime; //Gravite
 	body.move(velocity * deltaTime);
 
-	body.setRotation(90.0f + Math::GetAngleVector(velocity)); //Rotate normal (Pour le fun)
+	body.setRotation(90.0f + Math::GetAngleVector(velocity));
 	explosion.setPosition(body.getPosition());
 
 	timeExplo = maxTime - timer.getElapsedTime().asSeconds();
@@ -151,4 +151,110 @@ bool Grenade::isTimeOut()
 		return false;
 	}
 	return true;
+}
+
+
+Mine::Mine(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoint, float radiusExplo,float radiusDetection , float timeExplo, float beforeActi) :
+	Rigidbody(&body)
+{
+	this->maxTime = timeExplo;
+	this->beforeActi = beforeActi;
+	this->timeExplo = timeExplo;
+	body.setSize(size);
+	body.setTexture(texture);
+	body.setPosition(spawnPoint);
+	body.setRotation(0);
+
+	explosion.setRadius(radiusExplo);
+	explosion.setOrigin(sf::Vector2f(radiusExplo, radiusExplo));
+	explosion.setPosition(spawnPoint);
+
+	detectionZone.setRadius(radiusDetection);
+	detectionZone.setOrigin(sf::Vector2f(radiusDetection, radiusDetection));
+	detectionZone.setPosition(spawnPoint);
+
+	txtTimer.setPosition(body.getPosition() - sf::Vector2f(0, 30));
+	txtTimer.setFont(AssetManager::GetFont("Stupid Meeting_D.otf"));
+	txtTimer.setString(std::to_string((int)timeExplo));
+
+	timer.restart();
+	
+}
+
+Mine::~Mine()
+{
+}
+
+void Mine::Update(float deltaTime)
+{
+
+	velocity.y += 981.0f * deltaTime; //Gravite
+	body.move(velocity * deltaTime);
+
+	explosion.setPosition(body.getPosition());
+	detectionZone.setPosition(body.getPosition());
+
+	if (detect)
+	{
+		timeExplo = maxTime - timer.getElapsedTime().asSeconds();
+		txtTimer.setString(std::to_string(timeExplo));
+		txtTimer.setPosition(body.getPosition() - sf::Vector2f(0, 30));
+	}
+	else if (!activated)
+	{
+		Activate();
+	}
+	else
+	{
+		timer.restart();
+	}
+}
+
+void Mine::Draw(sf::RenderWindow& window)
+{
+	window.draw(body);
+	window.draw(txtTimer);
+}
+
+void Mine::DrawExplosion(sf::RenderWindow& window)
+{
+	window.draw(explosion);
+}
+
+void Mine::Oncollision(sf::Vector2f direction)
+{
+	if (direction.x < 0.0f)
+	{
+		velocity.x = 0.0f; // Left
+	}
+	else if (direction.x > 0.0f)
+	{
+		velocity.x = 0.0f; // Right
+	}
+	if (direction.y < 0.0f)
+	{
+		velocity.y = 0.0f;	// Bottom
+	}
+	else if (direction.y > 0.0f)
+	{
+		velocity.y = 0.0f; //Top
+	}
+}
+
+bool Mine::isTimeOut()
+{
+	if (timeExplo > 0) {
+		return false;
+	}
+	return true;
+}
+
+
+void Mine::Activate()
+{
+	if (timer.getElapsedTime().asSeconds() > beforeActi)
+	{
+		activated = true;
+		timer.restart();
+	}
 }
