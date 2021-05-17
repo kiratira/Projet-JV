@@ -116,17 +116,15 @@ int main()
     goToMenu.push_back(&showMenu);
     goToMenu.push_back(&canGen);
 
-    /* zone de test, ne pas executer */
-
-#pragma region TestZONE
-
-   // //TEST SOUND (Fonctionnel)
-   
-   
-
-
-
-#pragma endregion
+    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen, musicGame, soundAmmo, soundHeal, soundHit;
+    soundExplosion.setBuffer(AssetManager::GetSoundBuffer("Explosion.ogg"));
+    soundAwp.setBuffer(AssetManager::GetSoundBuffer("Awp.ogg"));
+    soundBazooka.setBuffer(AssetManager::GetSoundBuffer("Bazooka.ogg"));
+    musicOpen.setBuffer(AssetManager::GetSoundBuffer("Open.ogg"));
+    musicGame.setBuffer(AssetManager::GetSoundBuffer("FondSonore.ogg"));
+    soundHeal.setBuffer(AssetManager::GetSoundBuffer("Heal.ogg"));
+    soundAmmo.setBuffer(AssetManager::GetSoundBuffer("Ammo.ogg"));
+    soundHit.setBuffer(AssetManager::GetSoundBuffer("hit.ogg"));
 
 
     while (window.isOpen())
@@ -160,7 +158,6 @@ int main()
             if (showParametres) 
             {
                 ClearVector(&buttons); //clear de tous les boutons du menu
-                sf::Vector2f* sizeButton = new sf::Vector2f(64, 64);
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 3.0f),"Equipes",24,sf::Color::Yellow));
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 2.0f),"Joueurs",24,sf::Color::Yellow));
 
@@ -354,7 +351,6 @@ int main()
                 ClearVector(&casesInventaire);
                 std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
                 int cptCI = 0;
-                float sizeCase = 100;
                 for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                 {
                     casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
@@ -566,7 +562,6 @@ int main()
                             ClearVector(&casesInventaire);
                             std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
                             int cptCI = 0;
-                            float sizeCase = 100;
                             for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                             {
                                 casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
@@ -643,7 +638,6 @@ int main()
                             ClearVector(&casesInventaire);
                             std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
                             int cptCI = 0;
-                            float sizeCase = 100;
                             for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                             {
                                 casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
@@ -756,7 +750,6 @@ int main()
                             ClearVector(&casesInventaire);
                             std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
                             int cptCI = 0;
-                            float sizeCase = 100;
                             for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                             {
                                 casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
@@ -797,7 +790,6 @@ int main()
                             ClearVector(&casesInventaire);
                             std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
                             int cptCI = 0;
-                            float sizeCase = 100;
                             for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                             {
                                 casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
@@ -976,7 +968,8 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
         *over = true;
         return true;
     }
-    else
+
+    for (unsigned int i = 0; i < players.size() - 1; i++)
     {
         if (*players[i]->GetEquipe() != *players[i + 1]->GetEquipe()) {
             break;
