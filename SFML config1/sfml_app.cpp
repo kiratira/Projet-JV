@@ -9,6 +9,13 @@
 #include "Caisse.h"
 #include "UI.h"
 
+/* parametres */
+#define largeurFen 1280
+#define hauteurFen 720
+#define sizeButton sf::Vector2f(64, 64) // taille des fleches dans le menu du choix du nombre de joueurs
+#define maxTime 30 // durée d'un round en seconde
+#define sizeCase  100.0f // taille des cases d'inventaire
+
 
 #define VectZero sf::Vector2f(0,0)
 
@@ -20,17 +27,20 @@ bool CheckPlayerAlive(std::vector<Player*> players, bool* game, bool* over,std::
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!");
-    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(1280, 720));
-    sf::View Uiview(sf::Vector2f(window.getSize().x /2.0f, window.getSize().y /2.0f), sf::Vector2f(1280, 720));
-    sf::View Inventaireview(sf::Vector2f(window.getSize().x /2.0f, window.getSize().y /2.0f), sf::Vector2f(1280, 720));
-    AssetManager a_manager;
-    //GUI ui_manager;
+    // creation de la fenetre
+	sf::RenderWindow window(sf::VideoMode(largeurFen, hauteurFen), "vers de ter'z");
+	sf::View view(VectZero, sf::Vector2f(largeurFen, hauteurFen));
+	sf::View Uiview(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), sf::Vector2f(largeurFen, hauteurFen));
+	sf::View Inventaireview(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), sf::Vector2f(largeurFen, hauteurFen));
+
+    /* variables */
+    // gestion du temps
     sf::Clock clockDeltaTime;
     sf::Clock clockTimer;
     sf::Clock PowerTimer;
     float deltaTime = 0.0f;
 
+    // vecteurs
     std::vector<Player*> players;
     std::vector<Equipe*> equipes;
     std::vector<sf::Vector2f*> spawnPoints;
@@ -38,15 +48,18 @@ int main()
     std::vector<Missile*> missiles;
     std::vector<Caisse*> caisses;
     std::vector<Balle*> balles;
-
     std::vector<CaseInventaire*> casesInventaire;
     std::vector<Button*> buttons;
     std::vector<Compteur*> compteurs;
     std::vector<Image*> images;
     std::vector<Label*> labels;
 
+
+    AssetManager a_manager;
     Player* mainPlayer = nullptr;
-    unsigned int mainPlayernbre = 0;
+
+    // booleens de reglages
+    unsigned int mainPlayernbre = 0; 
     bool readyToPlay = false;
     bool canChange = false;
 
@@ -69,20 +82,16 @@ int main()
     std::string selectedWeapon = "Bazooka";
     std::string winner = "";
     sf::RectangleShape* viseur = new sf::RectangleShape();
-    float maxTime = 10;
+    int cptCI;
 
+    // compteurs de checkCollision
+    unsigned int cptPl;
+    unsigned int cptE;
+    unsigned int cptM;
+    unsigned int cptT;
+    unsigned int cptP;
 
-#pragma region TestZONE
-
-   // //TEST SOUND (Fonctionnel)
-   
-   
-
-
-
-#pragma endregion
-    
-    
+    // mise des booleens dans des vecteurs
     std::vector<bool*> goToParametes;
     std::vector<bool*> goToGame;
     std::vector<bool*> goToMenu;
@@ -107,15 +116,17 @@ int main()
     goToMenu.push_back(&showMenu);
     goToMenu.push_back(&canGen);
 
-    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen,musicGame,soundAmmo,soundHeal,soundHit;
-    soundExplosion.setBuffer(AssetManager::GetSoundBuffer("Explosion.ogg"));
-    soundAwp.setBuffer(AssetManager::GetSoundBuffer("Awp.ogg"));
-    soundBazooka.setBuffer(AssetManager::GetSoundBuffer("Bazooka.ogg"));
-    musicOpen.setBuffer(AssetManager::GetSoundBuffer("Open.ogg"));
-    musicGame.setBuffer(AssetManager::GetSoundBuffer("FondSonore.ogg"));
-    soundHeal.setBuffer(AssetManager::GetSoundBuffer("Heal.ogg"));
-    soundAmmo.setBuffer(AssetManager::GetSoundBuffer("Ammo.ogg"));
-    soundHit.setBuffer(AssetManager::GetSoundBuffer("hit.ogg"));
+    /* zone de test, ne pas executer */
+
+#pragma region TestZONE
+
+   // //TEST SOUND (Fonctionnel)
+   
+   
+
+
+
+#pragma endregion
 
 
     while (window.isOpen())
@@ -123,48 +134,80 @@ int main()
         // Generation
         if (canGen)
         {
-            // Generation "Menu"
+            /* menu titre */
             if (showMenu)
             {
+                // clear le texte et le boutons
                 if (!labels.empty()) ClearVector(&labels);
                 if (!buttons.empty()) ClearVector(&buttons);
-                buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Lancer partie", 32, sf::Vector2f(300, 70),
-                    sf::Vector2f(window.getSize().x / 2.5f, (window.getSize().y / 2.0f) - 10.0f), goToParametes));
-                canGen = false;
+
+				buttons.push_back(
+                    new BoolButton(
+                        &AssetManager::GetTexture("CadreBouton.png"),
+                        &AssetManager::GetTexture("CadreBouton.png"),
+                        "Lancer partie",
+                        32,
+                        sf::Vector2f(300, 70),
+                        sf::Vector2f(window.getSize().x / 2.5f, 
+                        (window.getSize().y / 2.0f) - 10.0f),
+                        goToParametes));
+
+				canGen = false;
                 musicOpen.play();
             }
 
-            // Generation "Parametres"
-            if (showParametres)
+            /* menu de gestion des equipes/personnages */
+            if (showParametres) 
             {
                 ClearVector(&buttons); //clear de tous les boutons du menu
                 sf::Vector2f* sizeButton = new sf::Vector2f(64, 64);
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 3.0f),"Equipes",24,sf::Color::Yellow));
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 2.0f),"Joueurs",24,sf::Color::Yellow));
+
+                
                 compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2.0f - 100.0f, window.getSize().y / 3.0f), 2, 4, 2, 32, sf::Color::Blue)); // Equipe
                 compteurs.push_back(new Compteur(sf::Vector2f(window.getSize().x / 2.0f - 100.0f, window.getSize().y / 2.0f), 1, 4, 1, 32, sf::Color::Blue)); // Personnages
-                buttons.push_back(new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 3.0f), compteurs[0])); //add Equipe
-                buttons.push_back(new AddButton(&AssetManager::GetTexture("ButtonNormalCompteur.png"), &AssetManager::GetTexture("ButtonClickedCompteur.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), compteurs[1])); //add Personnages
-                buttons.push_back(new MinusButton(&AssetManager::GetTexture("ButtonNormalCompteurInverse.png"), &AssetManager::GetTexture("ButtonClickedCompteurInverse.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 3.0f), compteurs[0])); //minus Equipe
-                buttons.push_back(new MinusButton(&AssetManager::GetTexture("ButtonNormalCompteurInverse.png"), &AssetManager::GetTexture("ButtonClickedCompteurInverse.png"),
-                    *sizeButton, sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), compteurs[1])); //minus Personnages
 
-                buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Start", 32, sf::Vector2f(130, 80),
-                    sf::Vector2f(window.getSize().x / 2.5f, (window.getSize().y * 0.8f)), goToGame));
+                //add Equipe
+                buttons.push_back(new AddButton(
+                    &AssetManager::GetTexture("ButtonNormalCompteur.png"),
+                    &AssetManager::GetTexture("ButtonClickedCompteur.png"),
+                    sizeButton, sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 3.0f), compteurs[0])); 
+
+                //minus Equipe
+                buttons.push_back(new MinusButton(
+                    &AssetManager::GetTexture("ButtonNormalCompteurInverse.png"),
+                    &AssetManager::GetTexture("ButtonClickedCompteurInverse.png"),
+                    sizeButton, sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 3.0f), compteurs[0])); 
+
+                //add Personnages
+                buttons.push_back(new AddButton(
+                    &AssetManager::GetTexture("ButtonNormalCompteur.png"),
+                    &AssetManager::GetTexture("ButtonClickedCompteur.png"),
+                    sizeButton, sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), compteurs[1])); 
+
+                //minus Personnages
+                buttons.push_back(new MinusButton(
+                    &AssetManager::GetTexture("ButtonNormalCompteurInverse.png"),
+                    &AssetManager::GetTexture("ButtonClickedCompteurInverse.png"),
+                    sizeButton, sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), compteurs[1])); 
+
+                // changement d'ecran
+                buttons.push_back(new BoolButton(
+                    &AssetManager::GetTexture("CadreBouton.png"),
+                    &AssetManager::GetTexture("CadreBouton.png"),
+                    "Start", 32, sf::Vector2f(130, 80), sf::Vector2f(window.getSize().x / 2.5f, (window.getSize().y * 0.8f)), goToGame));
+
                 canGen = false;
             }
 
-            // Generation "Game"
+            /* ecran de jeu */
             if (showGame)
             {
-
+                //creation de la map et des spawns
                 musicGame.play();
                 musicOpen.stop();
                 ClearVector(&labels);
-                //Generation Entitees
                 ClearVector(&buttons);
                 MapGenerator::SPGen(compteurs[0]->GetValue(), compteurs[1]->GetValue() ,&spawnPoints);
                 MapGenerator::PlayerGen(compteurs[0]->GetValue(), compteurs[1]->GetValue(), &players, equipes, spawnPoints);
@@ -172,24 +215,35 @@ int main()
                 ClearVector(&compteurs);
                 mainPlayer = players[mainPlayernbre];
 
-                //Generation UI
+                // interface timer
                 sf::Vector2f* timerPosition =  new sf::Vector2f(window.getSize().x * 5.0f / 100.0f, window.getSize().y * 90.0f / 100.0f);
                 images.push_back( new Image(&AssetManager::GetTexture("CadreUI.png"), *timerPosition, sf::Vector2f(60, 60))); //Fond du Timer
-                compteurs.push_back(new Compteur(*timerPosition - sf::Vector2f(8,15), 0, int(maxTime), 0, 32, sf::Color::Blue)); //Timer temps restant
-                labels.push_back( new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "Appuyer sur \"Enter\" pour jouer", 64, sf::Color::White)); //message de ready
-                buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Inventaire", 32,
-                    sf::Vector2f(240, 80), sf::Vector2f(window.getSize().x - 240.0f, 0), goToInventaire)); // Button Inventaire
-                buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBoutonPause.png"), &AssetManager::GetTexture("CadreBoutonPause.png"), "", 32,
-                    sf::Vector2f(128, 128), sf::Vector2f(window.getSize().x - 240.0f, 100), goToPause)); //Button Pause
+                compteurs.push_back(new Compteur(*timerPosition - sf::Vector2f(8,15), 0, maxTime, 0, 32, sf::Color::Blue)); //Timer temps restant
 
+                /* interface de jeu */
+                //message de debut de round
+                labels.push_back( new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "Appuyer sur \"Enter\" pour jouer", 64, sf::Color::White)); 
+
+                //Fond de l'inventaire
                 images.push_back(new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.45f,
-                    sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.9f)); //Fond de l'inventaire
+                    sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.9f));
+
+                // Button Inventaire
+                buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture("CadreBouton.png"), "Inventaire", 32,
+                    sf::Vector2f(240, 80), sf::Vector2f(window.getSize().x - 240.0f, 0), goToInventaire)); 
+
+                //Fond de Pause
                 images.push_back(new Image(&AssetManager::GetTexture("CadreBouton.png"), sf::Vector2f(float(window.getSize().x), float(window.getSize().y)) * 0.45f,
-                    sf::Vector2f(window.getSize().x*1.5f, window.getSize().y*1.5f)));//Fond de Pause
+                    sf::Vector2f(window.getSize().x*1.5f, window.getSize().y*1.5f)));
+
+                //Button Pause
+                buttons.push_back(new BoolButton(&AssetManager::GetTexture("CadreBoutonPause.png"), &AssetManager::GetTexture("CadreBoutonPause.png"), "", 32,
+                    sf::Vector2f(128, 128), sf::Vector2f(window.getSize().x - 240.0f, 100), goToPause)); 
 
                 std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
-                int cptCI = 0;
-                float sizeCase = 100;
+                cptCI = 0;
+
+                // boucle parmi les cases de l'inventaire
                 for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
                 {
                     casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
@@ -218,13 +272,12 @@ int main()
                 ClearVector(&labels);
                 ClearVector(&spawnPoints);
 
-                labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "l'Equipe " + winner + " a gagne la guerre", 64, sf::Color::White)); //message de victoire
-                //buttons.push_back(new BoolButton())
+                labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "l'Equipe " + winner + " a gagne !", 64, sf::Color::White)); //message de victoire
             }
         }
        
 //-------------------------------------------------------------------------
-        //Gestion interface "Menu/Parametres"
+        /* Gestion interface "Menu/Parametres" */
 //-------------------------------------------------------------------------
 
         if (showMenu || showParametres)
@@ -235,13 +288,13 @@ int main()
             {
                 switch (event.type)
                 {
-                case sf::Event::Closed:
+                case sf::Event::Closed: // fermeture de la fenetre
                     window.close();
                     break;
-                case sf::Event::EventType::MouseButtonPressed:
-                    switch (event.mouseButton.button)
+
+                case sf::Event::EventType::MouseButtonPressed: // pression sur un bouton
+                    if(event.mouseButton.button == sf::Mouse::Left)
                     {
-                    case sf::Mouse::Left:
                         for (Button* button : buttons)
                         {
                             if (button->checkClicked(sf::Mouse::getPosition(window), true))
@@ -261,18 +314,15 @@ int main()
                             }
 
                         }
-                        break;
                     }
                     break;
-                case sf::Event::EventType::MouseButtonReleased:
-                    switch (event.mouseButton.button)
+                case sf::Event::EventType::MouseButtonReleased: // relache un bouton
+                    if(event.mouseButton.button == sf::Mouse::Left)
                     {
-                    case sf::Mouse::Left:
                         for (Button* button : buttons)
                         {
                             button->checkClicked(sf::Mouse::getPosition(window), false);
                         }
-                        break;
                     }
                     break;
                 };
@@ -285,14 +335,14 @@ int main()
         {
             deltaTime = clockDeltaTime.restart().asSeconds();
 
-            compteurs[0]->SetValue(int(maxTime) - int(clockTimer.getElapsedTime().asSeconds()));
+            compteurs[0]->SetValue(maxTime - int(clockTimer.getElapsedTime().asSeconds()));
             if (compteurs[0]->GetValue() <= 0 && readyToPlay && canChange)
             {
-#pragma region SwapPlayer
+#pragma region SwapPlayer
                 //Swap Player
                 mainPlayernbre++;
                 if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
-                SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                mainPlayer->SetMovement(false);
                 mainPlayer = players[mainPlayernbre];
                 clockTimer.restart().asSeconds();
                 readyToPlay = false;
@@ -311,12 +361,12 @@ int main()
                         sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
                     casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
                     cptCI++;
-                }
+                }
 #pragma endregion
             }
 
 
-            if (deltaTime > 1.0f / 20.0f) deltaTime = 1.0f / 20.0f; //bug de la fen�tre
+            if (deltaTime > 1 / 20.0f) deltaTime = 1 / 20.0f; //bug de la fenetre
 
             sf::Event event;
             while (window.pollEvent(event))
@@ -474,13 +524,6 @@ int main()
 
             sf::Vector2f direction;
 
-            unsigned int cptP = 0;
-            unsigned int cptE = 0;
-            unsigned int cptM = 0;
-            unsigned int cptPl = 0;
-            unsigned int cptT = 0;
-
-
             // !!!!!!!!!!!!! NETTOYER LES COLLISIONS AVEC DES POINTEURS + "FOR" pour retirer les pointeurs
 
             cptPl = 0;
@@ -507,7 +550,7 @@ int main()
                         if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
                         {
                             std::cout << "Swap1" << std::endl;
-#pragma region SwapPlayer
+#pragma region SwapPlayer
                             //Swap Player
                             mainPlayernbre++;
                             if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -530,7 +573,7 @@ int main()
                                     sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
                                 casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
                                 cptCI++;
-                            }
+                            }
 #pragma endregion
                         }
 
@@ -584,7 +627,7 @@ int main()
 
                         if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
                         {
-#pragma region SwapPlayer
+#pragma region SwapPlayer
                             //Swap Player
                             mainPlayernbre++;
                             if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -607,7 +650,7 @@ int main()
                                     sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
                                 casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
                                 cptCI++;
-                            }
+                            }
 #pragma endregion
                         }
                         
@@ -619,7 +662,7 @@ int main()
             }
 
 
-
+            cptP = 0;
             for (Platforme* platforme : platformes)
             {
                 cptPl = 0;
@@ -697,7 +740,7 @@ int main()
 
                         if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
                         {
-#pragma region SwapPlayer
+#pragma region SwapPlayer
                             //Swap Player
                             mainPlayernbre++;
                             if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
@@ -720,7 +763,7 @@ int main()
                                     sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
                                 casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
                                 cptCI++;
-                            }
+                            }
 #pragma endregion             
                         }                 
                     }
@@ -897,7 +940,6 @@ int main()
     ClearVector(&labels);
 
     delete(viseur);
-    //delete(testInventaire);
 #pragma endregion
 
     return 0;
@@ -915,8 +957,7 @@ void ClearVector(std::vector<T*>* vect)
 
 void SwapMainPlayer(Player* actual, Player* next)
 {
-    actual->SetMovement(false); 
-
+    actual->SetMovement(false);
 }
 
 bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::string* winner) {
@@ -935,8 +976,7 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
         *over = true;
         return true;
     }
-
-    for (unsigned int i = 0; i < players.size() - 1; i++)
+    else
     {
         if (*players[i]->GetEquipe() != *players[i + 1]->GetEquipe()) {
             break;
@@ -944,10 +984,17 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
         
         if (i == players.size() - 2)
         {
-            *winner = *players[i]->GetEquipe()->GetNom();
-            *game = false;
-            *over = true;
-            return true;
+            if (*players[i]->GetEquipe()->GetTagEquipe() != *players[i + 1]->GetEquipe()->GetTagEquipe()) {
+                return false;
+            }
+
+            if (i == players.size() - 2)
+            {
+                *winner = *players[i]->GetEquipe()->GetNom();
+                *game = false;
+                *over = true;
+                return true;
+            }
         }
     }
 
