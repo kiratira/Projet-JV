@@ -4,7 +4,6 @@
 #include "Collider.h"
 #include "Math.h"
 #include "Rigidbody.h"
-#include "AssetManager.h"
 
 
 class Missile : public Rigidbody
@@ -67,6 +66,7 @@ public:
 
 	int GetDamage() {return damage;}
 	bool isTimeOut();
+	Collider GetExploCollider() { return Collider(&explosion); }
 
 private:
 	sf::RectangleShape body;
@@ -75,7 +75,8 @@ private:
 	sf::Vector2f angle;
 	float power;
 	int damage = 60;
-	float timeExplo;
+	int timeExplo;
+	float maxTime;
 	sf::Clock timer;
 	sf::Text txtTimer;
 };

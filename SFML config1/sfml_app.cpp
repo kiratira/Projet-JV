@@ -46,6 +46,7 @@ int main()
     std::vector<sf::Vector2f*> spawnPoints;
     std::vector<Platforme*> platformes;
     std::vector<Missile*> missiles;
+    std::vector<Grenade*> grenades;
     std::vector<Caisse*> caisses;
     std::vector<Balle*> balles;
     std::vector<CaseInventaire*> casesInventaire;
@@ -116,7 +117,7 @@ int main()
     goToMenu.push_back(&showMenu);
     goToMenu.push_back(&canGen);
 
-    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen, musicGame, soundAmmo, soundHeal, soundHit;
+    sf::Sound soundExplosion, soundAwp, soundBazooka, musicOpen, musicGame, soundAmmo, soundHeal, soundHit, soundGrenade;
     soundExplosion.setBuffer(AssetManager::GetSoundBuffer("Explosion.ogg"));
     soundAwp.setBuffer(AssetManager::GetSoundBuffer("Awp.ogg"));
     soundBazooka.setBuffer(AssetManager::GetSoundBuffer("Bazooka.ogg"));
@@ -125,6 +126,7 @@ int main()
     soundHeal.setBuffer(AssetManager::GetSoundBuffer("Heal.ogg"));
     soundAmmo.setBuffer(AssetManager::GetSoundBuffer("Ammo.ogg"));
     soundHit.setBuffer(AssetManager::GetSoundBuffer("hit.ogg"));
+    soundGrenade.setBuffer(AssetManager::GetSoundBuffer("Grenade.ogg"));
 
 
     while (window.isOpen())
@@ -445,7 +447,27 @@ int main()
                                 soundBazooka.play();
                          
                             }
-                            if (selectedWeapon == "Awp")
+                            else if (selectedWeapon == "Grenade") //modifier pour prendre l'arme 
+                            {
+                                mainPlayer->Shoot("Grenade");
+                                float theta = viseur->getRotation() * 3.1416f / 180;
+                                sf::Vector2f angle = sf::Vector2f(cosf(theta), sinf(theta));
+                                float power = float(PowerTimer.getElapsedTime().asMilliseconds());
+                                if (!mainPlayer->IsFaceRight())
+                                {
+                                    angle = -angle;
+                                    grenades.push_back(new Grenade(&AssetManager::GetTexture("Grenade.png"), sf::Vector2f(16, 16),
+                                        mainPlayer->GetPosition() - sf::Vector2f(mainPlayer->GetSize().x, mainPlayer->GetSize().y / 2),120, angle, power, 5));
+                                }
+                                else
+                                {
+                                    grenades.push_back(new Grenade(&AssetManager::GetTexture("Grenade.png"), sf::Vector2f(16, 16),
+                                        mainPlayer->GetPosition() + sf::Vector2f(mainPlayer->GetSize().x, -mainPlayer->GetSize().y / 2), 120, angle, power, 5));
+                                }
+                                soundGrenade.play();
+
+                            }
+                            else if (selectedWeapon == "Awp")
                             {
                                 mainPlayer->Shoot("Awp");
                                 sf::Vector2f position;
@@ -515,6 +537,77 @@ int main()
             for (Missile* missile : missiles)
             {
                 missile->Update(deltaTime);
+            }
+            int cptG = 0;
+            for (Grenade* grenade : grenades)
+            {
+                grenade->Update(deltaTime);
+                if (grenade->isTimeOut())
+                {
+                    Collider exploCol = grenade->GetExploCollider();
+                    soundExplosion.play();
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        cptE = 0;
+                        for (Platforme* platforme : platformes)
+                        {
+                            if (platforme->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
+                            {
+                                delete(platforme);
+                                platformes.erase(platformes.begin() + cptE);
+                            }
+
+                            cptE++;
+                        }
+                    }
+                    cptPl = 0;
+                    for (Player* player : players)
+                    {
+                        if (player->GetCollider().CheckCollisionCircle(&exploCol, int(exploCol.GetHalfSizeCircle().x)))
+                        {
+                            if (player->TakeDamage(grenade->GetDamage()))
+                            {
+                                delete player;
+                                players.erase(players.begin() + cptPl);
+                            }
+                            soundHit.play();
+                        }
+                        cptPl++;
+                    }
+
+                    if (!CheckPlayerAlive(players, &showGame, &showGameOver, &canGen, &doneGen, &winner))
+                    {
+#pragma region SwapPlayer
+                        //Swap Player
+                        mainPlayernbre++;
+                        if (mainPlayernbre > players.size() - 1) mainPlayernbre = 0;
+                        SwapMainPlayer(mainPlayer, players[mainPlayernbre]);
+                        mainPlayer = players[mainPlayernbre];
+                        clockTimer.restart().asSeconds();
+                        readyToPlay = false;
+                        showReady = true;
+                        canChange = false;
+                        showViseur = false;
+                        viseur->setRotation(0);
+                        MapGenerator::CaisseGen(&caisses);
+                        ClearVector(&casesInventaire);
+                        std::map<std::string, int> inventaire = mainPlayer->GetEquipe()->GetInventaire()->GetAllMunitions(); //generation des cases de l'inventaire
+                        int cptCI = 0;
+                        for (std::map<std::string, int>::iterator it = inventaire.begin(); it != inventaire.end(); it++)
+                        {
+                            casesInventaire.push_back(new CaseInventaire(&AssetManager::GetTexture("CadreBouton.png"), &AssetManager::GetTexture(it->first + ".png"),
+                                sf::Vector2f(100, 100), sf::Vector2f(sizeCase, sizeCase) + sf::Vector2f(sizeCase * cptCI, 0), it->first));
+                            casesInventaire[cptCI]->GetCompteur()->SetValue(it->second);
+                            cptCI++;
+                        }
+#pragma endregion             
+                    }
+                    delete(grenade);
+                    grenades.erase(grenades.begin() + cptG);
+
+                }
+                cptG++;
             }
 
             for (Balle* balle : balles)
@@ -596,8 +689,6 @@ int main()
                     if (player->GetCollider().CheckCollision(&missileCol))
                     {
                         Collider exploCol = missile->GetExploCollider();
-
-
                         soundExplosion.play();
 
                         for (int i = 0; i < 7; i++)
@@ -782,6 +873,14 @@ int main()
                     }
                 }
 
+                for (Grenade* grenade : grenades)
+                {
+                    Collider grenadeCol = grenade->GetCollider();
+                    if (platforme->GetCollider().CheckCollision(&grenadeCol, &direction, 1.0f)) {
+                        grenade->Oncollision(direction);
+                    }
+                }
+
                 cptP++;
             }
             unsigned int cptC = 0;
@@ -824,7 +923,7 @@ int main()
             }
 
 #pragma endregion
-
+            
         }
 
 #pragma region Camera + Affichage
@@ -880,6 +979,11 @@ int main()
             for (Missile* missile : missiles)
             {
                 missile->Draw(window);
+            }
+
+            for (Grenade* grenade : grenades)
+            {
+                grenade->Draw(window);
             }
 
             for (Platforme* platforme : platformes)
@@ -941,6 +1045,7 @@ int main()
     ClearVector(&compteurs);
     ClearVector(&images);
     ClearVector(&labels);
+    ClearVector(&grenades);
 
     delete(viseur);
 #pragma endregion

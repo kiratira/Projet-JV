@@ -1,4 +1,5 @@
 #include "Projectile.h"
+#include "AssetManager.h"
 
 
 #define PI 3.1416
@@ -76,7 +77,7 @@ Grenade::Grenade(sf::Texture* texture, sf::Vector2f size, sf::Vector2f spawnPoin
 {
 	this->power = power;
 	this->angle = angle;
-	this->timeExplo = timeExplo;
+	this->maxTime = timeExplo;
 
 	body.setSize(size);
 	body.setTexture(texture);
@@ -104,12 +105,13 @@ void Grenade::Update(float deltaTime)
 	velocity.y += 981.0f * deltaTime; //Gravite
 	body.move(velocity * deltaTime);
 
-	body.rotate(90.0f + Math::GetAngleVector(velocity)); //Rotate normal (Pour le fun)
+	body.setRotation(90.0f + Math::GetAngleVector(velocity)); //Rotate normal (Pour le fun)
 	explosion.setPosition(body.getPosition());
 
-	timeExplo -= -timer.getElapsedTime().asSeconds();
+	timeExplo = maxTime - timer.getElapsedTime().asSeconds();
 	txtTimer.setString(std::to_string(timeExplo));
 	txtTimer.setPosition(body.getPosition() - sf::Vector2f(0, 10));
+
 }
 
 void Grenade::Draw(sf::RenderWindow& window)
