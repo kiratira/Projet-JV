@@ -5,6 +5,7 @@ inventory::inventory()
 {
 	m_munitions.insert({ "Bazooka", 10 });
 	m_munitions.insert({ "Awp", 5 });
+	m_munitions.insert({ "Grenade", 2 });
 }
 
 inventory::~inventory()

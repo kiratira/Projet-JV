@@ -128,7 +128,8 @@ void MapGenerator::PlayerGen(int nbreEquipes, int nbrePersonnages, std::vector<P
             spawnPoints.erase(spawnPoints.begin() + a);
         }
     }
-
+    colors.clear();
+    names.clear();
 }
 
 void MapGenerator::SPGen(int nbEquipes, int nbJoueurs, std::vector<sf::Vector2f*>* spawnPoints)
@@ -156,7 +157,7 @@ void MapGenerator::SPGen(int nbEquipes, int nbJoueurs, std::vector<sf::Vector2f*
 }
 
 
-std::map<int, std::string> MapGenerator::m_type = { {0,"Bazooka"},{1,"Awp"} };
+std::map<int, std::string> MapGenerator::m_type = { {0,"Bazooka"},{1,"Awp"},{2,"Grenade"} };
 
 
 
