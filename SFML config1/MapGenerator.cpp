@@ -107,9 +107,15 @@ void MapGenerator::PlayerGen(int nbreEquipes, int nbrePersonnages, std::vector<P
     colors.push_back(sf::Color::Green);
     colors.push_back(sf::Color::Yellow);
 
+    std::vector<std::string> names;
+    names.push_back(" Blue ");
+    names.push_back(" Red ");
+    names.push_back(" Green ");
+    names.push_back(" Yellow ");
+
     for (int i = 0; i < nbreEquipes; i++)
     {  
-        equipes.push_back(new Equipe(i + 1,&colors[i]));
+        equipes.push_back(new Equipe(i + 1,&colors[i],names[i]));
     }
 
     for (int i = 0; i < nbrePersonnages; i++)

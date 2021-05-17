@@ -10,7 +10,7 @@
 class Equipe
 {
 public:
-	Equipe(int tagEquipe,sf::Color* color);
+	Equipe(int tagEquipe, sf::Color* color, std::string nom);
 	~Equipe();
 
 

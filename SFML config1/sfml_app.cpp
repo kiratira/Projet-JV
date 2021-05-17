@@ -23,7 +23,7 @@ template <class T>
 void ClearVector(std::vector<T*>* vect);
 
 void SwapMainPlayer(Player* actual, Player* next);
-bool CheckPlayerAlive(std::vector<Player*> players, bool* game, bool* over,std::string* winner);
+bool CheckPlayerAlive(std::vector<Player*> players, bool* game, bool* over, bool* canGen, bool* doneGen, std::string* winner);
 
 int main()
 {
@@ -259,6 +259,7 @@ int main()
             // Generation "GameOver"
             if (showGameOver)
             { 
+                musicGame.stop();
                 ClearVector(&players);
                 ClearVector(&platformes);
                 ClearVector(&equipes);
@@ -270,6 +271,18 @@ int main()
                 ClearVector(&spawnPoints);
 
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 3.0f, window.getSize().y / 2.0f), "l'Equipe " + winner + " a gagne !", 64, sf::Color::White)); //message de victoire
+                buttons.push_back(
+                    new BoolButton(
+                        &AssetManager::GetTexture("CadreBouton.png"),
+                        &AssetManager::GetTexture("CadreBouton.png"),
+                        "Revenir au menu",
+                        32,
+                        sf::Vector2f(300, 70),
+                        sf::Vector2f(window.getSize().x / 2.5f,
+                            (window.getSize().y / 1.4f) - 10.0f),
+                        goToMenu));
+                canGen = false;
+                doneGen = true;
             }
         }
        
@@ -277,7 +290,7 @@ int main()
         /* Gestion interface "Menu/Parametres" */
 //-------------------------------------------------------------------------
 
-        if (showMenu || showParametres)
+        if (showMenu || showParametres || showGameOver)
         {
 
             sf::Event event;
@@ -535,15 +548,13 @@ int main()
                         {
                             delete player;
                             players.erase(players.begin() + cptPl);
-
-                            CheckPlayerAlive(players, &showGame, &showGameOver, &winner);
                             
                         }
                         soundHit.play();
                         delete(balle);
                         balles.erase(balles.begin() + cptT);
 
-                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                        if (!CheckPlayerAlive(players, &showGame, &showGameOver,&canGen,&doneGen,&winner))
                         {
                             std::cout << "Swap1" << std::endl;
 #pragma region SwapPlayer
@@ -620,7 +631,7 @@ int main()
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
 
-                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &canGen, &doneGen, &winner))
                         {
 #pragma region SwapPlayer
                             //Swap Player
@@ -679,7 +690,7 @@ int main()
                                 delete player;
                                 players.erase(players.begin() + cptPl);
                             }
-                            if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))  
+                            if (!CheckPlayerAlive(players, &showGame, &showGameOver, &canGen, &doneGen, &winner))
                             break;
                         }
                         else
@@ -732,7 +743,7 @@ int main()
                         delete(missile);
                         missiles.erase(missiles.begin() + cptM);
 
-                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &winner))
+                        if (!CheckPlayerAlive(players, &showGame, &showGameOver, &canGen, &doneGen, &winner))
                         {
 #pragma region SwapPlayer
                             //Swap Player
@@ -903,14 +914,14 @@ int main()
                 }
             }
             if (showReady)labels[0]->Draw(window);
-            if (pause)images[2]->Draw(window); //Fond de pause
-            buttons[1]->Draw(window); // Pause
+            //if (pause)images[2]->Draw(window); //Fond de pause
+            //buttons[1]->Draw(window); // Pause
         } 
 
-        if (showGameOver)
+        if (showGameOver && doneGen)
         {
             labels[0]->Draw(window);
-            //buttons[0]->Draw(window);
+            buttons[0]->Draw(window);
         }
 
         window.display();
@@ -952,13 +963,14 @@ void SwapMainPlayer(Player* actual, Player* next)
     actual->SetMovement(false);
 }
 
-bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::string* winner) {
-
+bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over,bool* canGen, bool* doneGen, std::string* winner) {
     if (players.size() == 1)
     {
         *winner = *players[0]->GetEquipe()->GetNom();
         *game = false;
         *over = true;
+        *canGen = true;
+        *doneGen = false;
         return true;
     }
     else if (players.size() == 0) {
@@ -966,6 +978,8 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
         *winner = "Personne";
         *game = false;
         *over = true;
+        *canGen = true;
+        *doneGen = false;
         return true;
     }
 
@@ -986,6 +1000,8 @@ bool CheckPlayerAlive(std::vector<Player*> players,bool* game,bool* over, std::s
                 *winner = *players[i]->GetEquipe()->GetNom();
                 *game = false;
                 *over = true;
+                *canGen = true;
+                *doneGen = false;
                 return true;
             }
         }
