@@ -10,8 +10,8 @@
 #include "UI.h"
 
 /* parametres */
-#define largeurFen 1280
-#define hauteurFen 720
+#define largeurFen 1920
+#define hauteurFen 1080
 #define sizeButton sf::Vector2f(64, 64) // taille des fleches dans le menu du choix du nombre de joueurs
 #define maxTime 30 // durée d'un round en seconde
 #define sizeCase  100.0f // taille des cases d'inventaire
@@ -28,7 +28,7 @@ bool CheckPlayerAlive(std::vector<Player*> players, bool* game, bool* over, bool
 int main()
 {
     // creation de la fenetre
-	sf::RenderWindow window(sf::VideoMode(largeurFen, hauteurFen), "vers de ter'z");
+	sf::RenderWindow window(sf::VideoMode(largeurFen, hauteurFen), "vers de ter'z",sf::Style::Fullscreen);
 	sf::View view(VectZero, sf::Vector2f(largeurFen, hauteurFen));
 	sf::View Uiview(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), sf::Vector2f(largeurFen, hauteurFen));
 	sf::View Inventaireview(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f), sf::Vector2f(largeurFen, hauteurFen));
@@ -157,12 +157,14 @@ int main()
 
 				canGen = false;
                 musicOpen.play();
+                images.push_back(new Image(&AssetManager::GetTexture("Main.png"), sf::Vector2f(largeurFen/2, hauteurFen/2), sf::Vector2f(largeurFen, hauteurFen)));
             }
 
             /* menu de gestion des equipes/personnages */
             if (showParametres) 
             {
                 ClearVector(&buttons); //clear de tous les boutons du menu
+                ClearVector(&images); //clear de tous les boutons du menu
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 3.0f),"Equipes",24,sf::Color::Yellow));
                 labels.push_back(new Label(sf::Vector2f(window.getSize().x / 4.0f, window.getSize().y / 2.0f),"Joueurs",24,sf::Color::Yellow));
 
@@ -206,6 +208,7 @@ int main()
             /* ecran de jeu */
             if (showGame)
             {
+                images.push_back(new Image(&AssetManager::GetTexture("fondGame.jpg"), sf::Vector2f(0, 0), sf::Vector2f(largeurFen *2, hauteurFen*2)));
                 //creation de la map et des spawns
                 musicGame.play();
                 musicOpen.stop();
@@ -256,6 +259,8 @@ int main()
 
                 viseur->setSize(sf::Vector2f(96, 32));
                 viseur->setOrigin(sf::Vector2f(0, mainPlayer->GetSize().y / 2));
+
+               
 
                 canGen = false;
                 doneGen = true;
@@ -1053,10 +1058,15 @@ int main()
         {
             window.setView(Uiview);
 
+            for (Image* image : images)
+            {
+                image->Draw(window);
+            }
+
             for (Button* button : buttons)
             {
                 button->Draw(window);
-            }
+            } 
         }
 
         if (showParametres)
@@ -1084,6 +1094,8 @@ int main()
             sf::Listener::setPosition(mainPlayer->GetPosition().x, mainPlayer->GetPosition().y, 0);
             view.setCenter(mainPlayer->GetPosition());
             window.setView(view);
+
+            images[0]->Draw(window); //fond
 
             if (showViseur) window.draw(*viseur);
             for (Player* player : players)
@@ -1124,20 +1136,20 @@ int main()
             window.setView(Uiview);
 
             //Timer
-            images[0]->Draw(window); 
+            images[1]->Draw(window);
             compteurs[0]->Draw(window);
 
             buttons[0]->Draw(window); //button inventaire           
 
             if (showInventaire) {
 
-                images[1]->Draw(window);
+                images[2]->Draw(window);
                 for (CaseInventaire* CI : casesInventaire)
                 {
                     CI->Draw(window);
                 }
             }
-            if (showReady)labels[0]->Draw(window);
+            if (showReady)labels[0]->Draw(window); 
             //if (pause)images[2]->Draw(window); //Fond de pause
             //buttons[1]->Draw(window); // Pause
         } 

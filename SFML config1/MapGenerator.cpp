@@ -95,7 +95,7 @@ void MapGenerator::MapRand(std::vector<Platforme*>* platformes)
             platformes->push_back(new Platforme("PixelSol.png", sf::Vector2f(largeurBlock, largeurBlock), sf::Vector2f(largeurBlock * (i-demiMap), largeurBlock * high), 0));
         }
 
-        platformes->push_back(new Platforme("PixelEau.png", sf::Vector2f(10000, 8), sf::Vector2f(-2000, 20), 3)); // pixel d'eau
+        platformes->push_back(new Platforme("PixelEau.png", sf::Vector2f(10000, -1000), sf::Vector2f(-2000, 500), 3)); // pixel d'eau
     }
 }
 
